@@ -49,7 +49,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'VoteChain.urls'
+ROOT_URLCONF = 'VoteChain_backends.urls'
 
 TEMPLATES = [
     {
@@ -67,7 +67,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'VoteChain.wsgi.application'
+WSGI_APPLICATION = 'VoteChain_backends.wsgi.application'
 
 
 # Database
