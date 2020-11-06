@@ -45,7 +45,7 @@ def capture():
 
 '''trainer to train the collected pictures '''
 
-def train():
+def train_model():
     path = 'dataset'
 
     recognizer = cv2.face.LBPHFaceRecognizer_create()
