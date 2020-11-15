@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from web3 import Web3
 import json
 from .utils import capture,train_model,recognize
-import signal,os
+#need not stop the thread of cv2 
 def homepage(request):
     pid=capture()
     return HttpResponse("home")
