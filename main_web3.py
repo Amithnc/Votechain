@@ -17,9 +17,12 @@ def ApproveCandidate(address,account_id):
 
 def vote(id,account_id,address):
   web3.eth.defaultAccount=web3.eth.accounts[account_id]
-  # status=contract.functions.status(address).call()
-  contract.functions.vote(id).transact()
-
+  status=contract.functions.status(address).call()
+  if status:
+    try:
+      contract.functions.vote(id).transact()
+    except:
+      print("already voted")
 def result():    
   count=contract.functions.candidatesCount().call()
   print(count)
@@ -29,5 +32,5 @@ def result():
     
 # AddCandidate("BJP",0)    
 # ApproveCandidate("0xec6b218aFFBba04Be36B32498e658B7D411F8E07",0)
-# vote(1,1,"0xec6b218aFFBba04Be36B32498e658B7D411F8E07")
+vote(1,1,"0xec6b218aFFBba04Be36B32498e658B7D411F8E07")
 # result()    

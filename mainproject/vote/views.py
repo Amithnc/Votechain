@@ -12,5 +12,9 @@ def train(request):
     return HttpResponse("trained")
 
 def recoginze_face(request):
-    result=recognize()
+    while True:    
+        res=recognize()
+        if res==True:
+            break
+    print(res)
     return HttpResponse("recognized")
