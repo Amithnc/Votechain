@@ -6,17 +6,24 @@
     <link rel="stylesheet" href="{% static 'css/register.css' %}">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css" />
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css" />
+    <script src="{% static 'js/register.js' %}"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Registration From</title>
 </head>
 
-<body>
+<body onload="checkCookie()">
     <div class="container register">
         <div class="row">
             <div class="col-md-3 register-left">
                 <img src="/media/votechain.png" alt="fly">
+                <!-- <a href="/" data-toggle="tooltip" title="HOME">
+                    <button  class="btn btn-info">Home</button>
+                </a> -->
             </div>
             <div class="col-md-9 register-right">
                 <ul class="nav nav-tabs nav-justified" id="myTab" role="tablist">
@@ -29,76 +36,63 @@
                     <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                         <h3 class="register-heading">Register Form</h3>
                         <div class="row register-form">
+                            {% if messages %}
+                            {% for message in messages %}
+                            <div id="alert"
+                                class="alert {% if message.tags %}alert-{% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}danger{% else %}{{ message.tags }}{% endif %}{% endif %}"
+                                role="alert">
+                                <h5><strong> {{ message }}</strong></h5>
+                            </div>
+                            {% endfor %}
+                            {% endif %}
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <form method="POST" action="/register">
+                                    <form name="notesForm" onsubmit="return validateForm()" action="/register/"
+                                        method="post">
+                                        {% csrf_token %}
                                         <input type="text" class="form-control" placeholder="Name *" value=""
-                                            required="True">
+                                            name="name" id="name" required="True">
                                 </div>
                                 <div class="form-group">
-                                    <input type="email" class="form-control" placeholder="Email *" value=""
+                                    <input type="email" class="form-control" placeholder="Email *" value="" name="email" id="email"
                                         required="True">
                                 </div>
                                 <div class="form-group">
                                     <input type="password" class="form-control" placeholder="password *" value=""
-                                        required="True">
+                                        name="password" required="True">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <input type="text" minlength="10" maxlength="10" class="form-control"
+                                    <input type="text" minlength="10" maxlength="10" class="form-control" name="phone" id="phone"
                                         placeholder="phone number *" value="" required="True">
                                 </div>
                                 <div class="form-group">
-                                    <input type="text" minlength="12" maxlength="12" name="aadhar_no"
-                                        class="form-control" placeholder="Aadhar number  *" value="" required="True">
+                                    <input type="text" minlength="12" maxlength="12" name="aadhar" class="form-control" id="aadhar"
+                                        placeholder="Aadhar number  *" value="" required="True">
                                 </div>
                                 <div class="form-group">
                                     <input type="password" class="form-control" placeholder="Confirm Password *"
-                                        value="" required="True">
+                                        name="cnfpassword" value="" required="True">
                                 </div>
-                                <input type="submit" class="btnRegister" value="Register">
+                                <input type="submit" class="btnRegister" value="Procced">
                                 </form>
                             </div>
                         </div>
                     </div>
                     <div class="tab-pane fade show" id="home-tab2" role="tabpanel" aria-labelledby="home2">
-                        <h3 class="register-heading">Register Form-2</h3>
+                        <h3 class="register-heading">Login to vote</h3>
                         <div class="row register-form">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="First Name *" value="">
-                                </div>
-                                <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="Last Name *" value="">
-                                </div>
-                                <div class="form-group">
-                                    <input type="email" class="form-control" placeholder="Email *" value="">
-                                </div>
-                                <div class="form-group">
-                                    <input type="text" maxlength="10" minlength="10" class="form-control"
-                                        placeholder="Phone *" value="">
+                                    <input type="text" class="form-control" placeholder="KEY *" value="">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <input type="password" class="form-control" placeholder="Password *" value="">
                                 </div>
-                                <div class="form-group">
-                                    <input type="password" class="form-control" placeholder="Confirm Password *"
-                                        value="">
-                                </div>
-                                <div class="form-group">
-                                    <select class="form-control">
-                                        <option value="">What is your Birthdate?</option>
-                                        <option value="">What is your old Phone Number</option>
-                                        <option value="">What is your Friend Name?</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="Answer *" value="">
-                                </div>
-                                <input type="submit" class="btnRegister" value="Register">
+                                <input type="submit" class="btnRegister" value="Procced">
                             </div>
                         </div>
                     </div>
@@ -107,43 +101,4 @@
         </div>
     </div>
 </body>
-
 </html>
-
-
-<!-- 
-<!doctype html>
-<html>
-<head>
-<meta charset="utf-8">
-<title>Makes "field" required and a decimal number only.</title>
-<link rel="stylesheet" href="https://jqueryvalidation.org/files/demo/site-demos.css">
- 
-</head>
-<body>
-<form id="myform">
-<label for="field">Required, decimal number: </label>
-<input class="left" id="field" name="field">
-<br/>
-<input type="submit" value="Validate!">
-</form>
-<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
-<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>
-<script>
-// just for the demos, avoids form submit
-jQuery.validator.setDefaults({
-  debug: true,
-  success: "valid"
-});
-$( "#myform" ).validate({
-  rules: {
-    field: {
-      required: true,
-      number: true
-    }
-  }
-});
-</script>
-</body>
-</html> -->
