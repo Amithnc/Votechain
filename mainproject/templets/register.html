@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Registration From</title>
+    <style>
+        body{background:-webkit-linear-gradient(right,#3931af,#000)}.register{background:-webkit-linear-gradient(left,#3931af,#00c6ff);margin-top:3%;padding:3%}.register-left{text-align:center;color:#f6f6f6;margin-top:4%}.register-left img{margin-top:20%;margin-bottom:5%;width:305px;-webkit-animation:mover 2s infinite alternate;animation:mover 1s infinite alternate}.register-left p{font-weight:lighter;padding:12%;margin-top:-9%}.register-left input{border:none;border-radius:1.5rem;padding:2%;width:60%;background:#f6f6f6;color:#262626;font-weight:700;margin-top:30%;margin-bottom:3%;cursor:pointer}.register-right{background:#f6f6f6;border-top-left-radius:10% 50%;border-bottom-left-radius:10% 50%}.register-heading{text-align:center;margin-top:8%;margin-bottom:-15%;color:#495057}.register .register-form{padding:10%;margin-top:10%}.btnRegister{float:right;margin-top:10%;border:none;border-radius:1.5rem;padding:2%;background:#0062cc;color:#f6f6f6;width:50%;cursor:pointer}.register .nav-tabs{margin-top:3%;border:none;background:#0062cc;border-radius:1.5rem;width:28%;float:right}.register .nav-tabs .nav-link{padding:2%;height:34px;font-weight:600;color:#f6f6f6;border-top-right-radius:1.5rem;border-bottom-right-radius:1.5rem}.register .nav-tabs .nav-link:hover{border:none}.register .nav-tabs .nav-link.active{width:100px;color:#0062cc;border:2px solid #0062cc;border-top-left-radius:1.5rem;border-bottom-left-radius:1.5rem}
+    </style>
+</head>
+
+<body>
+    <div class="container register">
+        <div class="row">
+            <div class="col-md-3 register-left">
+                <img src="/media/votechain.png" alt="fly">
+            </div>
+            <div class="col-md-9 register-right">
+                <ul class="nav nav-tabs nav-justified" id="myTab" role="tablist">
+                    <li class="nav-item"><a href="#home" class="nav-link active" id="home-link" data-toggle="tab"
+                            role="tab" aria-controls="home" aria-selected="true">Register</a></li>
+                    <li class="nav-item"><a href="#home-tab2" class="nav-link" id="home-tab-link" data-toggle="tab"
+                            role="tab" aria-controls="home2" aria-selected="false">vote</a></li>
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                        <h3 class="register-heading">Register Form</h3>
+                        <div class="row register-form">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <form method="POST" action="/register">
+                                        <input type="text" class="form-control" placeholder="Name *" value=""
+                                            required="True">
+                                </div>
+                                <div class="form-group">
+                                    <input type="email" class="form-control" placeholder="Email *" value=""
+                                        required="True">
+                                </div>
+                                <div class="form-group">
+                                    <input type="password" class="form-control" placeholder="password *" value=""
+                                        required="True">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <input type="text" minlength="10" maxlength="10" class="form-control"
+                                        placeholder="phone number *" value="" required="True">
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" minlength="12" maxlength="12" name="aadhar_no"
+                                        class="form-control" placeholder="Aadhar number  *" value="" required="True">
+                                </div>
+                                <div class="form-group">
+                                    <input type="password" class="form-control" placeholder="Confirm Password *"
+                                        value="" required="True">
+                                </div>
+                                <input type="submit" class="btnRegister" value="Register">
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade show" id="home-tab2" role="tabpanel" aria-labelledby="home2">
+                        <h3 class="register-heading">Register Form-2</h3>
+                        <div class="row register-form">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="First Name *" value="">
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="Last Name *" value="">
+                                </div>
+                                <div class="form-group">
+                                    <input type="email" class="form-control" placeholder="Email *" value="">
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" maxlength="10" minlength="10" class="form-control"
+                                        placeholder="Phone *" value="">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <input type="password" class="form-control" placeholder="Password *" value="">
+                                </div>
+                                <div class="form-group">
+                                    <input type="password" class="form-control" placeholder="Confirm Password *"
+                                        value="">
+                                </div>
+                                <div class="form-group">
+                                    <select class="form-control">
+                                        <option value="">What is your Birthdate?</option>
+                                        <option value="">What is your old Phone Number</option>
+                                        <option value="">What is your Friend Name?</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" placeholder="Answer *" value="">
+                                </div>
+                                <input type="submit" class="btnRegister" value="Register">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+
+
+<!-- 
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Makes "field" required and a decimal number only.</title>
+<link rel="stylesheet" href="https://jqueryvalidation.org/files/demo/site-demos.css">
+ 
+</head>
+<body>
+<form id="myform">
+<label for="field">Required, decimal number: </label>
+<input class="left" id="field" name="field">
+<br/>
+<input type="submit" value="Validate!">
+</form>
+<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>
+<script>
+// just for the demos, avoids form submit
+jQuery.validator.setDefaults({
+  debug: true,
+  success: "valid"
+});
+$( "#myform" ).validate({
+  rules: {
+    field: {
+      required: true,
+      number: true
+    }
+  }
+});
+</script>
+</body>
+</html> -->
