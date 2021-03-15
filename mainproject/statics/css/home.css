@@ -1,0 +1,53 @@
+#info-3 {
+    background: linear-gradient(rgba(100, 181, 246, .3), rgba(0, 0, 0, .8)), url(http://bit.ly/2xMHeVk) 0 0/cover
+}
+
+#feature-rundown img {
+    width: 120px
+}
+
+.debug {
+    border: 2px solid red
+}
+
+.fill-viewport {
+    min-height: 100vh
+}
+
+.fill-40-viewport {
+    min-height: 40vh
+}
+
+.fill-80-viewport {
+    min-height: 80vh
+}
+
+.fill-90-viewport {
+    min-height: 90vh
+}
+
+.jumbotron-transparent {
+    background-color: transparent
+}
+
+.text-white-70 {
+    color: rgba(255, 255, 255, .7)
+}
+
+.text-black-70 {
+    color: rgba(0, 0, 0, .7)
+}
+
+.text-black-40 {
+    color: rgba(0, 0, 0, .4)
+}
+
+.text-white-40 {
+    color: rgba(255, 255, 255, .4)
+}
+
+@media screen and (min-width:768px) {
+    .basis-md-50 {
+        flex-basis: 50%
+    }
+}
