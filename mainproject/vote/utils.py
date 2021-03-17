@@ -2,14 +2,13 @@ import cv2,os
 import numpy as np
 from PIL import Image
 ''' face capture '''
-def capture():
+def capture(user_id):
     cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
     cam.set(3, 640) #video width
     cam.set(4, 480) #video height
-
     face_detector = cv2.CascadeClassifier('Cascades/haarcascade_frontalface_default.xml')
 
-    face_id = input('\n enter user id end press ENTER ')
+    face_id = user_id
 
     print("\n Initializing face capture. Please look at the camera...")
     #individual sampling face count
@@ -40,8 +39,6 @@ def capture():
     print("\n Exiting ")
     cam.release()
     cv2.destroyAllWindows()
-    # return process id to terminate
-    return os.getpid()
 
 '''trainer to train the collected pictures '''
 
@@ -80,8 +77,6 @@ def train_model():
     recognizer.write('trainer/trainer.yml') 
 
     print("\n {0} faces trained. Exiting Program".format(len(np.unique(ids))))
-    pid=os.getpid()
-    return(pid)
 
 '''final recognizer'''
 
@@ -124,7 +119,7 @@ def recognize():
         cv2.rectangle(img, (x,y), (x+w,y+h), (0,255,0), 2)
 
         id, confidence = recognizer.predict(gray[y:y+h,x:x+w])
-
+        print(id)
         #confidence is less them 100 ==> "0" is perfect match 
         if (confidence < 100):
             id = names[id]

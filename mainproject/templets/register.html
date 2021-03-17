@@ -45,7 +45,7 @@
                             </div>
                             {% endfor %}
                             {% endif %}
-                            <div class="col-md-6">
+                            <div>
                                 <div class="form-group">
                                     <form name="notesForm" onsubmit="return validateForm()" action="/register/"
                                         method="post">
@@ -54,30 +54,36 @@
                                             name="name" id="name" required="True">
                                 </div>
                                 <div class="form-group">
-                                    <input type="email" class="form-control" placeholder="Email *" value="" name="email" id="email"
-                                        required="True">
-                                </div>
-                                <div class="form-group">
-                                    <input type="password" class="form-control" placeholder="password *" value=""
-                                        name="password" required="True">
+                                    <input type="email" class="form-control" placeholder="Email *" value="" name="email"
+                                        id="email" required="True">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <input type="text" minlength="10" maxlength="10" class="form-control" name="phone" id="phone"
-                                        placeholder="phone number *" value="" required="True">
+                                    <input type="text" minlength="10" maxlength="10" class="form-control" name="phone"
+                                        id="phone" placeholder="phone number *" value="" required="True">
                                 </div>
                                 <div class="form-group">
-                                    <input type="text" minlength="12" maxlength="12" name="aadhar" class="form-control" id="aadhar"
-                                        placeholder="Aadhar number  *" value="" required="True">
-                                </div>
-                                <div class="form-group">
-                                    <input type="password" class="form-control" placeholder="Confirm Password *"
-                                        name="cnfpassword" value="" required="True">
+                                    <input type="text" minlength="12" maxlength="12" name="aadhar" class="form-control"
+                                        id="aadhar" placeholder="Aadhar number  *" value="" required="True">
                                 </div>
                                 <input type="submit" class="btnRegister" value="Procced">
-                                </form>
                             </div>
+                            <div class="col-md-6"  >
+                                <div class="form-group">
+                                    <input type="hidden" class="form-control" placeholder="OTP *" value="" name="otp"
+                                        id="otp" required="True">
+                                </div>
+                                <div class="form-group">
+                                    <input type="hidden" class="form-control" placeholder="password *" value=""
+                                        name="password" id="password" required="True">
+                                </div>
+                                <div class="form-group">
+                                    <input type="hidden" class="form-control" placeholder="Confirm Password *"
+                                        name="cnfpassword"  id="cnfpassword" value="" required="True">
+                                </div>
+                            </div>
+                        </form>
                         </div>
                     </div>
                     <div class="tab-pane fade show" id="home-tab2" role="tabpanel" aria-labelledby="home2">
@@ -101,4 +107,18 @@
         </div>
     </div>
 </body>
+<script>
+    var status = "{{message}}"
+    if (status == "show") {
+        document.getElementById("otp").setAttribute("type", "number");
+        document.getElementById("password").setAttribute("type", "password");
+        document.getElementById("cnfpassword").setAttribute("type", "password");
+        document.getElementById("name").setAttribute("type","hidden");
+        document.getElementById("email").setAttribute("type","hidden")
+        document.getElementById("phone").setAttribute("type","hidden")
+        document.getElementById("aadhar").setAttribute("type","hidden")
+
+    }
+</script>
+
 </html>

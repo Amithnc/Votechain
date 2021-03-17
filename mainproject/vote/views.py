@@ -5,10 +5,11 @@ from web3 import Web3
 import json
 from .utils import capture,train_model,recognize
 import requests
+import random
 
 def homepage(request):
     return render(request,'home.html')
-
+otp=0
 def register(request):
     if request.method == "POST":
         aadhar=request.POST.get('aadhar',None)
@@ -16,6 +17,7 @@ def register(request):
         email=request.POST.get('email',None)
         password=request.POST.get('password',None)
         phone=request.POST.get('phone',None)
+        user_input_otp=request.POST.get('otp',None)
         raw_url="http://127.0.0.1:7000/data/"
         url=raw_url+str(aadhar)
         response = requests.request("GET", url)
@@ -30,13 +32,42 @@ def register(request):
         if data['phone_number']!=phone:
             messages.warning(request, 'Phone Number doest match with aadhar database')
             return redirect('/register')
-        if data['age']<18:
+        if int(data['age'])<18:
             messages.warning(request, 'sorry you cannot cast vote in this age')
             return redirect('/register')
+        response_test={}
+        response_test['message']="show"
+        if user_input_otp=="" and password =="":
+            global otp
+            number=generate_otp()
+            otp=number
+            print(otp,"otp----when sending")
+            first_snippet="https://www.fast2sms.com/dev/bulkV2?authorization=ikvTwZbp4tSNDdmI1Ls8BjcFehOVAqglozuKQYMrUHaCn7R6G2atl7ZjPgYDkvNoMEueA32d6ws85O1C&route=v3&sender_id=TXTIND&message_text="
+            message="your%20OTP%20for%20registration%20to%20VOTECHAIN%20is%20"+str(otp)
+            next_snippet="&language=english&flash=0&numbers="+phone
+            url=first_snippet+message+next_snippet
+            requests.request("GET", url)
+            messages.success(request, 'OTP sent to your phone number')
+        else:
+            # print(otp,"otp----in check")
+            if otp!=int(user_input_otp):
+                messages.warning(request, 'WRONG OTP PLEASE TRY AGAIN')
+                return render(request,'register.html',response_test)
+            else:
+                messages.success(request,'SUCCESSFULLY LOGGED IN')    
+                return redirect('/register')
+        return render(request,'register.html',response_test)
     return render(request,'register.html')
 
+def generate_otp():
+    number=""
+    for _ in range(4):
+        number+= str(random.randint(0,9))
+    return int(number)
+
+
 def capture_images(request):
-    pid=capture()
+    pid=capture(301535499355)
     return HttpResponse("home")
 
 def train(request):
