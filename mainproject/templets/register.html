@@ -67,9 +67,9 @@
                                     <input type="text" minlength="12" maxlength="12" name="aadhar" class="form-control"
                                         id="aadhar" placeholder="Aadhar number  *" value="" required="True">
                                 </div>
-                                <input type="submit" class="btnRegister" value="Procced">
+                                <input id="submitbtn" type="submit" class="btnRegister" value="Procced">
                             </div>
-                            <div class="col-md-6"  >
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <input type="hidden" class="form-control" placeholder="OTP *" value="" name="otp"
                                         id="otp" required="True">
@@ -80,10 +80,16 @@
                                 </div>
                                 <div class="form-group">
                                     <input type="hidden" class="form-control" placeholder="Confirm Password *"
-                                        name="cnfpassword"  id="cnfpassword" value="" required="True">
+                                        name="cnfpassword" id="cnfpassword" value="" required="True">
                                 </div>
                             </div>
-                        </form>
+                            </form>
+                            <div id="last_info" hidden>
+                                <h4>You will now be redirected to face capture page </h4>
+                                <p class="text-center" ><a href="/capture/" data-toggle="tooltip" title="proceed to next step">
+                                    <button type="button" class="badge badge-pill badge-success">CONTINUE</button>
+                                </a></p>
+                            </div>
                         </div>
                     </div>
                     <div class="tab-pane fade show" id="home-tab2" role="tabpanel" aria-labelledby="home2">
@@ -113,12 +119,21 @@
         document.getElementById("otp").setAttribute("type", "number");
         document.getElementById("password").setAttribute("type", "password");
         document.getElementById("cnfpassword").setAttribute("type", "password");
-        document.getElementById("name").setAttribute("type","hidden");
-        document.getElementById("email").setAttribute("type","hidden")
-        document.getElementById("phone").setAttribute("type","hidden")
-        document.getElementById("aadhar").setAttribute("type","hidden")
-
+        document.getElementById("name").setAttribute("type", "hidden");
+        document.getElementById("email").setAttribute("type", "hidden");
+        document.getElementById("phone").setAttribute("type", "hidden");
+        document.getElementById("aadhar").setAttribute("type", "hidden");
+    }
+    else if(status == "show_last_info"){
+        document.getElementById("name").setAttribute("type", "hidden");
+        document.getElementById("email").setAttribute("type", "hidden");
+        document.getElementById("phone").setAttribute("type", "hidden");
+        document.getElementById("aadhar").setAttribute("type", "hidden");
+        document.getElementById("otp").setAttribute("type", "hidden");
+        document.getElementById("password").setAttribute("type", "hidden");
+        document.getElementById("cnfpassword").setAttribute("type", "hidden");
+        document.getElementById("submitbtn").setAttribute("type", "hidden");
+        document.getElementById("last_info").removeAttribute("hidden")
     }
 </script>
-
 </html>
