@@ -7,5 +7,4 @@ urlpatterns=[
     path('capture/',views.capture_images),
     path('train/',views.train,name="train-model"),
     path('recoginze/',views.recoginze_face,name='recoginze_face'),
-    path('api/',views.api),
 ]

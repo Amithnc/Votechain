@@ -42,11 +42,11 @@ def register(request):
             number=generate_otp()
             otp=number
             print(otp,"otp----when sending")
-            first_snippet="https://www.fast2sms.com/dev/bulkV2?authorization=ikvTwZbp4tSNDdmI1Ls8BjcFehOVAqglozuKQYMrUHaCn7R6G2atl7ZjPgYDkvNoMEueA32d6ws85O1C&route=v3&sender_id=TXTIND&message_text="
-            message="your%20OTP%20for%20registration%20to%20VOTECHAIN%20is%20"+str(otp)
-            next_snippet="&language=english&flash=0&numbers="+phone
-            url=first_snippet+message+next_snippet
-            requests.request("GET", url)
+            # first_snippet="https://www.fast2sms.com/dev/bulkV2?authorization=ikvTwZbp4tSNDdmI1Ls8BjcFehOVAqglozuKQYMrUHaCn7R6G2atl7ZjPgYDkvNoMEueA32d6ws85O1C&route=v3&sender_id=TXTIND&message_text="
+            # message="your%20OTP%20for%20registration%20to%20VOTECHAIN%20is%20"+str(otp)
+            # next_snippet="&language=english&flash=0&numbers="+phone
+            # url=first_snippet+message+next_snippet
+            # requests.request("GET", url)
             messages.success(request, 'OTP sent to your phone number')
         else:
             # print(otp,"otp----in check")
@@ -54,8 +54,9 @@ def register(request):
                 messages.warning(request, 'WRONG OTP PLEASE TRY AGAIN')
                 return render(request,'register.html',response_test)
             else:
-                messages.success(request,'SUCCESSFULLY LOGGED IN')    
-                return redirect('/register')
+                response_test['message']="show_last_info"
+                messages.success(request,'successfully verified your phone number')    
+                return render(request,'register.html',response_test)
         return render(request,'register.html',response_test)
     return render(request,'register.html')
 
@@ -82,12 +83,3 @@ def recoginze_face(request):
     print(res)
     return HttpResponse("recognized")
 
-def api(request):
-    url="http://127.0.0.1:7000/data/301539499355"
-    response = requests.request("GET", url)
-    y=eval(response.text)
-    s=y[0]
-    print(s['aadhar_number'])
-    # y=json.loads(str(response))
-    # print(y)
-    return HttpResponse(response)

@@ -1,7 +1,8 @@
-setTimeout(function () {
-    // Closing the alert 
+// Closing the alert
+setTimeout(function () { 
     $('#alert').alert('close');
 }, 8000);
+//form validation
 function validateForm() {
     name = document.notesForm.name.value
     email = document.notesForm.email.value
