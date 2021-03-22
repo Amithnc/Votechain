@@ -1,15 +1,18 @@
 from django.shortcuts import render,redirect
 from django.contrib import messages
-from django.http import HttpResponse
 from web3 import Web3
-import json
 from .utils import capture,train_model,recognize
 import requests
 import random
+from .models import voter_data
+from django.contrib.auth.hashers import check_password,make_password
 
-def homepage(request):
+
+def homepage(request):  
     return render(request,'home.html')
-otp=0
+
+otp=0;passwd=""
+
 def register(request):
     if request.method == "POST":
         aadhar=request.POST.get('aadhar',None)
@@ -18,6 +21,10 @@ def register(request):
         password=request.POST.get('password',None)
         phone=request.POST.get('phone',None)
         user_input_otp=request.POST.get('otp',None)
+        obj=voter_data.objects.filter(aadhar_number=aadhar)
+        if len(obj)!=0:
+            messages.warning(request, 'Already registered please use the key to vote')
+            return redirect('/register')
         raw_url="https://aadhar.pythonanywhere.com/data/"
         url=raw_url+str(aadhar)
         response = requests.request("GET", url)
@@ -55,7 +62,11 @@ def register(request):
                 return render(request,'register.html',response_test)
             else:
                 response_test['message']="show_last_info"
-                response_test['user_id']="amith_n_c"
+                obj=voter_data.objects.all()
+                key_number=obj[len(obj)-1].key_number+1
+                global passwd
+                passwd=password
+                response_test['url']=str(aadhar)+"&"+str(key_number)
                 messages.success(request,'successfully verified your phone number')    
                 return render(request,'register.html',response_test)
         return render(request,'register.html',response_test)
@@ -69,22 +80,42 @@ def generate_otp():
 
 
 def capture_images(request,id):
-    response=capture(id)
+    temp=id.split("&")
+    voter_data.objects.create(aadhar_number=int(temp[0]),key_number=int(temp[1]),password=make_password(passwd))
+    obj=voter_data.objects.filter(aadhar_number=int(temp[0]))
+    response=capture(obj[0].id)
     if response=="done":
         result=train()
         if result=="trained":
-            messages.success(request,'Registration Successfull Key is sent to your mobile number')
+            #for getting key
+            ganache_url="HTTP://127.0.0.1:7545"
+            web3=Web3(Web3.HTTPProvider(ganache_url))
+            ganache_key=web3.eth.accounts[int(temp[1])]
+            voter_data.objects.filter(aadhar_number=int(temp[0])).update(key=ganache_key)
+            raw_url="https://aadhar.pythonanywhere.com/data/"
+            url=raw_url+temp[0]
+            response = requests.request("GET", url)
+            evaluated_response=eval(response.text)
+            data=evaluated_response[0]
+            phone=data['phone_number']
+            first_snippet="https://www.fast2sms.com/dev/bulkV2?authorization=ikvTwZbp4tSNDdmI1Ls8BjcFehOVAqglozuKQYMrUHaCn7R6G2atl7ZjPgYDkvNoMEueA32d6ws85O1C&route=v3&sender_id=TXTIND&message_text="
+            message="your%20KEY%20for%20Voting%20in%20VOTECHAIN%20is%20"+str(ganache_key)
+            next_snippet="&language=english&flash=0&numbers="+phone
+            url=first_snippet+message+next_snippet
+            requests.request("GET", url)
+            messages.success(request,'Registration successful Key is sent to your mobile number')
             return redirect('/')   
 
 def train():
     train_model()
     return "trained"
 
-def recoginze_face(request):
+def recoginze_face(request,id):
     while True:    
         res=recognize()
-        if res==True:
+        if res==int(id):
             break
     print(res)
-    return HttpResponse("recognized")
+    messages.success(request,'successfully authenticated proceed to voting')
+    return redirect('/') 
 

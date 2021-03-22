@@ -93,7 +93,7 @@ def recognize():
     errcount = 0
 
     # Initialize and start realtime video capture
-    cam = cv2.VideoCapture(0)
+    cam = cv2.VideoCapture(0,cv2.CAP_DSHOW)
     cam.set(3, 640) #widht
     cam.set(4, 480) #height
 
@@ -118,11 +118,11 @@ def recognize():
         cv2.rectangle(img, (x,y), (x+w,y+h), (0,255,0), 2)
 
         id, confidence = recognizer.predict(gray[y:y+h,x:x+w])
-        print(id)
         #confidence is less them 100 ==> "0" is perfect match 
         if (confidence < 100):
             confidence = "  {0}%".format(round(100 - confidence))
-            return True
+            cv2.destroyAllWindows()
+            return id
         else:
             id = "unknown"
             confidence = "  {0}%".format(round(100 - confidence))
