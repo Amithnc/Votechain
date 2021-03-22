@@ -18,7 +18,7 @@ def register(request):
         password=request.POST.get('password',None)
         phone=request.POST.get('phone',None)
         user_input_otp=request.POST.get('otp',None)
-        raw_url="http://127.0.0.1:7000/data/"
+        raw_url="https://aadhar.pythonanywhere.com/data/"
         url=raw_url+str(aadhar)
         response = requests.request("GET", url)
         temp=eval(response.text)
@@ -55,6 +55,7 @@ def register(request):
                 return render(request,'register.html',response_test)
             else:
                 response_test['message']="show_last_info"
+                response_test['user_id']="amith_n_c"
                 messages.success(request,'successfully verified your phone number')    
                 return render(request,'register.html',response_test)
         return render(request,'register.html',response_test)
@@ -67,13 +68,17 @@ def generate_otp():
     return int(number)
 
 
-def capture_images(request):
-    pid=capture(301535499355)
-    return HttpResponse("home")
+def capture_images(request,id):
+    response=capture(id)
+    if response=="done":
+        result=train()
+        if result=="trained":
+            messages.success(request,'Registration Successfull Key is sent to your mobile number')
+            return redirect('/')   
 
-def train(request):
-    result=train_model()
-    return HttpResponse("trained")
+def train():
+    train_model()
+    return "trained"
 
 def recoginze_face(request):
     while True:    

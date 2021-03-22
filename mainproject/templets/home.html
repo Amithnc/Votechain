@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
@@ -17,11 +18,12 @@
         rel="stylesheet">
     <title>VOTECHAIN-HOME</title>
 </head>
+
 <body>
     <section id="info--1">
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container-fluid">
-                <a class="navbar-brand" href="/" >VOTECHAIN</a>
+                <a class="navbar-brand" href="/">VOTECHAIN</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false"
                     aria-label="Toggle navigation">
@@ -35,6 +37,15 @@
                 </div>
             </div>
         </nav>
+        {% if messages %}
+        {% for message in messages %}
+        <div id="alert"
+            class="alert {% if message.tags %}alert-{% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}danger{% else %}{{ message.tags }}{% endif %}{% endif %}"
+            role="alert">
+            <h5><strong> {{ message }}</strong></h5>
+        </div>
+        {% endfor %}
+        {% endif %}
         <div class="container">
             <div class="row fill-80-viewport pt-5 align-items-center">
                 <div class="col d-none d-md-block align-self-end">
@@ -149,5 +160,10 @@
         </div>
     </section>
 </body>
+<script>
+    setTimeout(function () {
+        $('#alert').alert('close');
+    }, 8000);
+</script>
 
 </html>

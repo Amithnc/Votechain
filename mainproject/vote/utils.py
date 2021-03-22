@@ -39,7 +39,7 @@ def capture(user_id):
     print("\n Exiting ")
     cam.release()
     cv2.destroyAllWindows()
-
+    return "done"
 '''trainer to train the collected pictures '''
 
 def train_model():
@@ -91,7 +91,6 @@ def recognize():
     #iniciate id counter
     id = 0
     errcount = 0
-    names = ['NONE','Amith'] 
 
     # Initialize and start realtime video capture
     cam = cv2.VideoCapture(0)
@@ -122,8 +121,6 @@ def recognize():
         print(id)
         #confidence is less them 100 ==> "0" is perfect match 
         if (confidence < 100):
-            id = names[id]
-            print(id)
             confidence = "  {0}%".format(round(100 - confidence))
             return True
         else:

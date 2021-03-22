@@ -3,6 +3,7 @@ setTimeout(function () {
     $('#alert').alert('close');
 }, 8000);
 //form validation
+
 function validateForm() {
     name = document.notesForm.name.value
     email = document.notesForm.email.value
@@ -57,3 +58,8 @@ function checkCookie() {
     document.getElementById("aadhar").value = aadhar;
     document.getElementById("email").value = email;
 }
+
+function display_message(){
+    alertify.alert('Instructions:', '<img src="/media/bulb.png" class="mt-4" width="40%"/><br><h5>1. Make sure to stay in well lighted area.</h5><img src="/media/face-detection.png" class="mt-4" width="40%" /><h5>2. Make sure your face is clearly visible</h5>', function () { alertify.success('click continue to move to the next step'); });
+}
+
