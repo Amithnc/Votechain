@@ -6,5 +6,7 @@ urlpatterns=[
     path('register/',views.register),
     path('capture/<str:id>',views.capture_images),
     path('train/',views.train,name="train-model"),
-    path('recoginze/<int:id>',views.recoginze_face,name='recoginze_face'),
+    path('recoginze/<int:id>/',views.recoginze_face,name='recoginze_face'),
+    path('login/',views.login),
+    path('logout/',views.logout),
 ]

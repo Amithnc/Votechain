@@ -51,6 +51,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'VoteChain_backends.urls'
+LOGIN_REDIRECT_URL = ''
+AUTH_USER_MODEL='vote.voter_data'
 
 TEMPLATES = [
     {

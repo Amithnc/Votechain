@@ -1,16 +1,17 @@
 // Closing the alert
 setTimeout(function () { 
     $('#alert').alert('close');
-}, 8000);
+}, 5000);
+
 //form validation
 
 function validateForm() {
-    name = document.notesForm.name.value
-    email = document.notesForm.email.value
-    phone = document.notesForm.phone.value;
-    aadhar = document.notesForm.aadhar.value;
-    password = document.notesForm.password.value;
-    cnfpassword = document.notesForm.cnfpassword.value;
+    name = document.getElementById("name").value
+    email = document.getElementById("email").value
+    phone = document.getElementById("phone").value;
+    aadhar = document.getElementById("aadhar").value;
+    password = document.getElementById("password").value;
+    cnfpassword = document.getElementById("cnfpassword").value;
     //set cookie.....
     var d = new Date();
     d.setTime(d.getTime() + (30 * 24 * 60 * 60 * 1000));

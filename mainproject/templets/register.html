@@ -27,97 +27,131 @@
             </div>
             <div class="col-md-9 register-right">
                 <ul class="nav nav-tabs nav-justified" id="myTab" role="tablist">
+                    {%ifequal message "tab2" %}
+                    <li class="nav-item"><a href="#home" class="nav-link" id="home-link" data-toggle="tab" role="tab"
+                            aria-controls="home">Register</a></li>
+                    {%else%}
                     <li class="nav-item"><a href="#home" class="nav-link active" id="home-link" data-toggle="tab"
-                            role="tab" aria-controls="home" aria-selected="true">Register</a></li>
+                            role="tab" aria-controls="home">Register</a></li>
+                    {%endifequal%}
+                    {%ifequal message "tab2" %}
+                    <li class="nav-item"><a href="#home-tab2" class="nav-link active" id="home-tab-link"
+                            data-toggle="tab" role="tab" aria-controls="home2">vote</a></li>
+                    {%else%}
                     <li class="nav-item"><a href="#home-tab2" class="nav-link" id="home-tab-link" data-toggle="tab"
-                            role="tab" aria-controls="home2" aria-selected="false">vote</a></li>
+                            role="tab" aria-controls="home2">vote</a></li>
+                    {%endifequal%}
                 </ul>
                 <div class="tab-content" id="myTabContent">
+                    {%ifequal message "tab2" %}
+                    <div class="tab-pane fade show" id="home" role="tabpanel" aria-labelledby="home-tab">
+                    {% else %}
                     <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                        <h3 class="register-heading">Register Form</h3>
-                        <div class="row register-form">
-                            {% if messages %}
-                            {% for message in messages %}
-                            <div id="alert"
-                                class="alert {% if message.tags %}alert-{% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}danger{% else %}{{ message.tags }}{% endif %}{% endif %}"
-                                role="alert">
-                                <h5><strong> {{ message }}</strong></h5>
-                            </div>
-                            {% endfor %}
-                            {% endif %}
-                            <div>
-                                <div class="form-group">
-                                    <form name="notesForm" onsubmit="return validateForm()" action="/register/"
-                                        method="post">
-                                        {% csrf_token %}
-                                        <input type="text" class="form-control" placeholder="Name *" value=""
-                                            name="name" id="name" required="True">
+                    {% endifequal %}
+                            <h3 class="register-heading">Register Form</h3>
+                            <div class="row register-form">
+                                {% if messages %}
+                                {% for message in messages %}
+                                <div id="alert"
+                                    class="alert {% if message.tags %}alert-{% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}danger{% else %}{{ message.tags }}{% endif %}{% endif %}"
+                                    role="alert">
+                                    <h5><strong> {{ message }}</strong></h5>
                                 </div>
-                                <div class="form-group">
-                                    <input type="email" class="form-control" placeholder="Email *" value="" name="email"
-                                        id="email" required="True">
+                                {% endfor %}
+                                {% endif %}
+                                <div>
+                                    <div class="form-group">
+                                        <form name="notesForm" onsubmit="return validateForm()" action="/register/"
+                                            method="post">
+                                            {% csrf_token %}
+                                            <input type="text" class="form-control" placeholder="Name *" value=""
+                                                name="name" id="name" required="True">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="email" class="form-control" placeholder="Email *" value=""
+                                            name="email" id="email" required="True">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <input type="text" minlength="10" maxlength="10" class="form-control" name="phone"
-                                        id="phone" placeholder="phone number *" value="" required="True">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <input type="text" minlength="10" maxlength="10" class="form-control"
+                                            name="phone" id="phone" placeholder="phone number *" value=""
+                                            required="True">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" minlength="12" maxlength="12" name="aadhar"
+                                            class="form-control" id="aadhar" placeholder="Aadhar number  *" value=""
+                                            required="True">
+                                    </div>
+                                    <input id="submitbtn" type="submit" class="btnRegister" value="Procced">
                                 </div>
-                                <div class="form-group">
-                                    <input type="text" minlength="12" maxlength="12" name="aadhar" class="form-control"
-                                        id="aadhar" placeholder="Aadhar number  *" value="" required="True">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <input type="hidden" class="form-control" placeholder="OTP *" value=""
+                                            name="otp" id="otp" required="True">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="hidden" class="form-control" placeholder="password *" value=""
+                                            name="password" id="password" required="True">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="hidden" class="form-control" placeholder="Confirm Password *"
+                                            name="cnfpassword" id="cnfpassword" value="" required="True">
+                                    </div>
                                 </div>
-                                <input id="submitbtn" type="submit" class="btnRegister" value="Procced">
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <input type="hidden" class="form-control" placeholder="OTP *" value="" name="otp"
-                                        id="otp" required="True">
+                                </form>
+                                <div id="last_info" hidden>
+                                    <h5>Next is face-capture phase:</h5>
+                                    <div class="alert alert-info" role="alert">
+                                        <strong>Read the instructions <button class="badge badge-pill badge-warning"
+                                                onclick="display_message();">Here</button> and finish the last step in
+                                            registration process.</strong>
+                                    </div>
+                                    <p class="text-center">
+                                        <button type="button" class="badge badge-pill badge-success"
+                                            onclick="display_gif();">CONTINUE</button>
+                                    </p>
                                 </div>
-                                <div class="form-group">
-                                    <input type="hidden" class="form-control" placeholder="password *" value=""
-                                        name="password" id="password" required="True">
-                                </div>
-                                <div class="form-group">
-                                    <input type="hidden" class="form-control" placeholder="Confirm Password *"
-                                        name="cnfpassword" id="cnfpassword" value="" required="True">
-                                </div>
-                            </div>
-                            </form>
-                            <div id="last_info" hidden>
-                                <h5>Next is face-capture phase:</h5>
-                                <div class="alert alert-info" role="alert">
-                                    <strong>Read the instructions <button class="badge badge-pill badge-warning"
-                                            onclick="display_message();">Here</button> and finish the last step in
-                                        registration process.</strong>
-                                </div>
-                                <p class="text-center">
-                                    <button type="button" class="badge badge-pill badge-success"
-                                        onclick="display_gif();">CONTINUE</button>
-                                </p>
                             </div>
                         </div>
-                    </div>
-                    <div class="tab-pane fade show" id="home-tab2" role="tabpanel" aria-labelledby="home2">
-                        <h3 class="register-heading">Login to vote</h3>
-                        <div class="row register-form">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="KEY *" value="">
+                        {%ifequal message "tab2" %}
+                        <div class="tab-pane fade show active" id="home-tab2" role="tabpanel" aria-labelledby="home2">
+                            {% else %}
+                            <div class="tab-pane fade show" id="home-tab2" role="tabpanel" aria-labelledby="home2">
+                                {% endifequal %}
+                                <h3 class="register-heading">Login to vote</h3>
+                                <div class="row register-form">
+                                    {% if messages %}
+                                    {% for message in messages %}
+                                    <div id="alert2"
+                                        class="alert {% if message.tags %}alert-{% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}danger{% else %}{{ message.tags }}{% endif %}{% endif %}"
+                                        role="alert">
+                                        <h5><strong> {{ message }}</strong></h5>
+                                    </div>
+                                    {% endfor %}
+                                    {% endif %}
+                                    <div class="col-md-6">
+                                        <form name="notesForm" action="/login/" method="post">
+                                            {% csrf_token %}
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" name="key" placeholder="KEY *"
+                                                    value="" required="true">
+                                            </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <input type="password" class="form-control" name="password"
+                                                placeholder="Password *" value="" required="true">
+                                        </div>
+                                        <input type="submit" class="btnRegister" value="Procced">
+                                        </form>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <input type="password" class="form-control" placeholder="Password *" value="">
-                                </div>
-                                <input type="submit" class="btnRegister" value="Procced">
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 </body>
 <script>
     var status = "{{message}}"
@@ -144,6 +178,9 @@
     function display_gif() {
         alertify.alert('CLICK YOUR PHOTO', '<img src="/media/face.gif" class="mt-4" width="100%" height="100%"/><h5>Please click "CAPTURE PHOTO" and look at the camara.</h5><a href="/capture/{{url}}">CAPTURE PHOTO</a>', function () { alertify.success('click continue to move to the next step'); });
     }
+    setTimeout(function () {
+        $('#alert2').alert('close');
+    }, 5000);
 </script>
 
 </html>
