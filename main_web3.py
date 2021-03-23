@@ -23,6 +23,7 @@ def vote(id,account_id,address):
       contract.functions.vote(id).transact()
     except:
       print("already voted")
+      
 def result():    
   count=contract.functions.candidatesCount().call()
   print(count)

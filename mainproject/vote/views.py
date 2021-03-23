@@ -16,10 +16,19 @@ from django.http import HttpResponse
 def homepage(request):  
     # o=voter_data.objects.all()
     # print("last_object_id:-",o[len(o)-1].id)
+    response_text={}
     if request.user.is_authenticated and not(request.user.is_superuser):
         usr=request.user
-        print(usr.key)
-    return render(request,'home.html')
+        aadhar=usr.aadhar_number
+        raw_url="https://aadhar.pythonanywhere.com/data/"
+        url=raw_url+str(aadhar)
+        response = requests.request("GET", url)
+        temp=eval(response.text)
+        data=temp[0]
+        response_text['name']=data['name']
+        if not usr.is_verified:
+            response_text['usr_id']=usr.id
+    return render(request,'home.html',response_text)
 
 otp=0
 
@@ -132,7 +141,10 @@ def login(request):
         user = auth.authenticate(key=key, password=passwd)
         if user:
             auth.login(request, user)
-            messages.success(request,'successfully logged-in')
+            if user.is_verified:
+                messages.success(request,'successfully logged-in and your face-id is already verified so please to continue to vote')
+                return redirect("/")
+            messages.success(request,'successfully logged-in please verify your face-id to continue to vote')
             return redirect("/")
         else:
             messages.warning(request,'WRONG CREDENTIALS PLEASE TRY AGAIN')
@@ -144,14 +156,17 @@ def logout(request):
     messages.success(request, 'logged-out successfully')
     return redirect("/")            
 
+@login_required(login_url="/register")
 def recoginze_face(request,id):
     response_text={}
-    while True:    
+    for i in range(5):    
         res=recognize()
         if res==int(id):
             break
-    print(res)
+    else:
+        messages.warning(request,'unable to authorize your face-id please make sure u sit in well lighted area and try again')
+        return redirect('/')
+    voter_data.objects.filter(id=int(id)).update(is_verified=True)   
     messages.success(request,'successfully authenticated proceed to voting')
-    response_text['message']="tab2"
-    return render(request,'register.html',response_text)
+    return redirect('/')
 
