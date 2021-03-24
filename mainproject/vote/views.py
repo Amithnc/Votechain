@@ -142,7 +142,7 @@ def login(request):
         if user:
             auth.login(request, user)
             if user.is_verified:
-                messages.success(request,'successfully logged-in and your face-id is already verified so please to continue to vote')
+                messages.success(request,'successfully logged-in and your face-id is already verified so please continue to vote')
                 return redirect("/")
             messages.success(request,'successfully logged-in please verify your face-id to continue to vote')
             return redirect("/")
