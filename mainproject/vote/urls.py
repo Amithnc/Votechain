@@ -9,4 +9,6 @@ urlpatterns=[
     path('recoginze/<int:id>/',views.recoginze_face,name='recoginze_face'),
     path('login/',views.login),
     path('logout/',views.logout),
+    path('vote/',views.cast_vote),
+    path('add/',views.addCandidate),
 ]

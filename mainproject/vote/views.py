@@ -11,14 +11,14 @@ from django.contrib.auth import get_user_model
 from django.contrib import auth
 # if request.user.is_authenticated():
 from django.http import HttpResponse
-
+from .main_web3 import AddCandidate,vote,result
 
 def homepage(request):  
     # o=voter_data.objects.all()
     # print("last_object_id:-",o[len(o)-1].id)
     response_text={}
+    usr=request.user
     if request.user.is_authenticated and not(request.user.is_superuser):
-        usr=request.user
         aadhar=usr.aadhar_number
         raw_url="https://aadhar.pythonanywhere.com/data/"
         url=raw_url+str(aadhar)
@@ -28,6 +28,8 @@ def homepage(request):
         response_text['name']=data['name']
         if not usr.is_verified:
             response_text['usr_id']=usr.id
+    if usr.is_authenticated:
+        response_text['vote']="TRUE"       
     return render(request,'home.html',response_text)
 
 otp=0
@@ -82,7 +84,10 @@ def register(request):
             else:
                 response_text['message']="show_last_info"
                 obj=voter_data.objects.all()
-                key_number=obj[len(obj)-1].key_number+1
+                if obj[0].is_superuser:
+                    key_number=0
+                else:    
+                    key_number=obj[len(obj)-1].key_number+1
                 global passwd
                 passwd=password
                 response_text['url']=str(aadhar)+"&"+str(key_number)
@@ -170,3 +175,18 @@ def recoginze_face(request,id):
     messages.success(request,'successfully authenticated proceed to voting')
     return redirect('/')
 
+
+@login_required(login_url="/register")
+def cast_vote(request):
+    usr=request.user
+    if not usr.is_verified:
+        messages.warning(request,'please verify your face-id frist and then proceed with this step')
+        return redirect('/')
+    if request.method == "POST":
+        pass
+    return render(request,'vote.html')   
+
+def addCandidate(request):
+    usr=request.user
+    res=AddCandidate("BJB",usr.key_number)
+    return HttpResponse(res)  

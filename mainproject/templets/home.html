@@ -49,19 +49,29 @@
                         </a>
                         {% endif %}
                         <a class="nav-link" href="" style="color: cornsilk;">hello {{name}}</a>
-                        <br>
+                        {%if vote and not usr_id%}
+                        <a href="vote/" data-toggle="tooltip" title="Cast Vote">
+                            <button type="button" class="btn btn-outline-light btn-rounded   "
+                                data-mdb-ripple-color="#000000">Cast Vote <i class="fas fa-vote-yea"></i></button>
+                        </a>
+                        {%endif%}
+                        <h5 style="visibility:hidden;" >..</h5>
                         {%if usr_id %}
                         <a data-toggle="tooltip" title="Verify your face " onclick="display_gif();">
                             <button type="button" class="btn btn-outline-light btn-rounded   "
                                 data-mdb-ripple-color="#000000"> Verify face-id <i class="fas fa-camera"></i></button>
                         </a>
                         {%endif%}
+                        <h5 style="visibility:hidden;" >..</h5>
                         <a href="/logout/" data-toggle="tooltip" title="logout">
                             <button type="button" class="btn btn-light btn-rounded   " data-mdb-ripple-color="#ffffff">
                                 Logout <i class="fas fa-sign-out-alt"></i></button>
                         </a>
                         {%else%}
-                        <a class="nav-link" href="/register/">Register/Vote</a>
+                        <a href="/register/" data-toggle="tooltip" title="Register or sign-in">
+                            <button type="button" class="btn btn-light btn-rounded   " data-mdb-ripple-color="#ffffff">
+                                Register / Vote <i class="fas fa-sign-in-alt"></i></i></button>
+                        </a>
                         {%endif%}
                         <!-- <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a> -->
                     </div>
