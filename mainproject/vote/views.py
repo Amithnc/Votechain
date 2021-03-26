@@ -32,6 +32,8 @@ def homepage(request):
         status=get_status(usr.key_number)
         if not status:
             response_text['vote']="TRUE" 
+        else:
+            response_text['results']="TRUE"   
     return render(request,'home.html',response_text)
 
 otp=0
@@ -151,6 +153,9 @@ def login(request):
             if user.is_verified:
                 messages.success(request,'successfully logged-in and your face-id is already verified so please continue to vote')
                 return redirect("/")
+            if get_status(user.key_number):
+                messages.success(request,'successfully logged-in and you have already voted so please the results now')
+                return redirect("/")
             messages.success(request,'successfully logged-in please verify your face-id to continue to vote')
             return redirect("/")
         else:
@@ -165,7 +170,10 @@ def logout(request):
 
 @login_required(login_url="/register")
 def recoginze_face(request,id):
-    response_text={}
+    obj=voter_data.objects.filter(id=id)
+    if len(obj)==0:
+        messages.warning(request,'NO FACE-ID FOUND WITH THE REQUESTED ID')
+        return redirect('/')
     for i in range(5):    
         res=recognize()
         if res==int(id):
@@ -225,9 +233,9 @@ def results(request):
         for i in range(len(details)):
             party_and_candidates.append((details[i][1])+" - "+(details[i][2])) 
             final_results.append(details[i][3])
-        response_text['details']=zip(party_and_candidates,final_results)
+        response_text['details']=party_and_candidates
+        response_text['results']=final_results
         return render(request,'result.html',response_text)
     else:
         messages.warning(request,'You have to vote first to see the results')
         return redirect("/")
-        

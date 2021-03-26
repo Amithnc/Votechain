@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>VOTECHAIN-results</title>
+    <script type="text/javascript" src="https://www.chartjs.org/dist/2.9.4/Chart.min.js"></script>
+    <script type="text/javascript" src="https://www.chartjs.org/samples/latest/utils.js"></script>
+</head>
+
+<body>
+    <div id="canvas-holder" style="width:90%">
+        <canvas id="chart-area"></canvas>
+    </div>
+</body>
+<script>
+    var config = {
+        type: 'pie',
+        data: {
+            datasets: [{
+                data: [
+                    // @ts-ignore
+                    {%for values in results %}
+                    {{values}},
+                    {%endfor%}
+                ],
+                backgroundColor: [
+                    'rgb(255, 159, 64)',
+                    'rgb(255, 99, 132)',
+                ],
+                label: 'Dataset 1'
+            }],
+            labels: [
+                {%for parties in details%}
+                "{{parties}}",
+                {%endfor%}
+            ]
+        },
+        options: {
+            responsive: true
+        }
+    };
+
+    window.onload = function () {
+        var ctx = document.getElementById('chart-area').getContext('2d');
+        window.myPie = new Chart(ctx, config);
+    };
+</script>
+
+</html>
