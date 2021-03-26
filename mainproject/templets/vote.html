@@ -33,13 +33,14 @@
                         <h4 class="pt-2">Somewhere inside of all of us is the power to change the world.<br>Please vote
                             responsibly</h4>
                     </div>
-                    <form action="/" method="POST" onsubmit="return validate();" >
+                    <form action="/vote/" method="POST" onsubmit="return validate();" >{%csrf_token%}
                         <div class="form-group">
                             <span class="custom-dropdown" >
                                 <select class="text-center" id="candidate_name" name="candidate_name" style="width:100%" >
-                                    <option value="" disabled selected >Name of the candidate</option>
-                                    <option value="2017">2017</option>
-                                    <option value="2018">2018</option>
+                                    <option value="" disabled selected >Name of Party & Candidate</option>
+                                    {%for number,detail in details%}
+                                    <option value="{{number}}">{{detail}}</option>
+                                    {%endfor%}
                                 </select>
                             </span>
                         </div>

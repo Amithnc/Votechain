@@ -11,7 +11,7 @@ from django.contrib.auth import get_user_model
 from django.contrib import auth
 # if request.user.is_authenticated():
 from django.http import HttpResponse
-from .main_web3 import AddCandidate,vote,result
+from .main_web3 import AddCandidate,vote_candidate,result,get_status
 
 def homepage(request):  
     # o=voter_data.objects.all()
@@ -29,7 +29,9 @@ def homepage(request):
         if not usr.is_verified:
             response_text['usr_id']=usr.id
     if usr.is_authenticated:
-        response_text['vote']="TRUE"       
+        status=get_status(usr.key_number)
+        if not status:
+            response_text['vote']="TRUE" 
     return render(request,'home.html',response_text)
 
 otp=0
@@ -169,24 +171,63 @@ def recoginze_face(request,id):
         if res==int(id):
             break
     else:
-        messages.warning(request,'unable to authorize your face-id please make sure u sit in well lighted area and try again')
+        messages.warning(request,'unable to authorize your face-id please make sure you sit in well lighted area and try again')
         return redirect('/')
     voter_data.objects.filter(id=int(id)).update(is_verified=True)   
     messages.success(request,'successfully authenticated proceed to voting')
     return redirect('/')
 
+@login_required(login_url="/register")
+def addCandidate(request):
+    if not request.user.is_superuser:
+        messages.warning(request,'You have to be admin to add candidates')
+        return redirect("/")
+    usr=request.user
+    res=AddCandidate("INR","RAHUL",usr.key_number)
+    return HttpResponse(res)  
+
 
 @login_required(login_url="/register")
 def cast_vote(request):
+    response_text={}
     usr=request.user
     if not usr.is_verified:
         messages.warning(request,'please verify your face-id frist and then proceed with this step')
-        return redirect('/')
+        return redirect('/')  
+    if get_status(usr.key_number):
+        messages.warning(request,'You have already voted')
+        return redirect('/')    
     if request.method == "POST":
-        pass
-    return render(request,'vote.html')   
-
-def addCandidate(request):
+        candidate_id=request.POST.get('candidate_name',None)
+        if vote_candidate(int(candidate_id),usr.key_number):
+            messages.success(request,'Successfully voted check the result now')
+            return redirect('/') 
+        else:
+            messages.warning(request,'some error occured during voting please try after sometime')
+            return redirect('/')     
+    details=result()
+    party_and_candidates=[]
+    party_and_candidates_number=[]
+    for i in range(len(details)):
+        party_and_candidates.append((details[i][1])+" - "+(details[i][2]))   
+        party_and_candidates_number.append(details[i][0])
+    response_text['details']=zip(party_and_candidates_number,party_and_candidates)
+    return render(request,'vote.html',response_text)   
+ 
+@login_required(login_url="/register")
+def results(request):
     usr=request.user
-    res=AddCandidate("BJB",usr.key_number)
-    return HttpResponse(res)  
+    response_text={}
+    if get_status(usr.key_number):
+        details=result()
+        party_and_candidates=[]
+        final_results=[]
+        for i in range(len(details)):
+            party_and_candidates.append((details[i][1])+" - "+(details[i][2])) 
+            final_results.append(details[i][3])
+        response_text['details']=zip(party_and_candidates,final_results)
+        return render(request,'result.html',response_text)
+    else:
+        messages.warning(request,'You have to vote first to see the results')
+        return redirect("/")
+        

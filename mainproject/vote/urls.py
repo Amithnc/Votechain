@@ -10,5 +10,6 @@ urlpatterns=[
     path('login/',views.login),
     path('logout/',views.logout),
     path('vote/',views.cast_vote),
-    path('add/',views.addCandidate),
+    path('add_candidate/',views.addCandidate),
+    path('results/',views.results),
 ]

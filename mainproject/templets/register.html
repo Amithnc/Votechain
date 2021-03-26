@@ -45,9 +45,9 @@
                 <div class="tab-content" id="myTabContent">
                     {%ifequal message "tab2" %}
                     <div class="tab-pane fade show" id="home" role="tabpanel" aria-labelledby="home-tab">
-                    {% else %}
-                    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                    {% endifequal %}
+                        {% else %}
+                        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                            {% endifequal %}
                             <h3 class="register-heading">Register Form</h3>
                             <div class="row register-form">
                                 {% if messages %}
@@ -176,7 +176,11 @@
         document.getElementById("last_info").removeAttribute("hidden")
     }
     function display_gif() {
-        alertify.alert('CLICK YOUR PHOTO', '<img src="/media/face.gif" class="mt-4" width="100%" height="100%"/><h5>Please click "CAPTURE PHOTO" and look at the camara.</h5><a href="/capture/{{url}}">CAPTURE PHOTO</a>', function () { alertify.success('click continue to move to the next step'); });
+        alertify.alert('CLICK YOUR PHOTO', '<img src="/media/face.gif" class="mt-4" width="100%" height="100%"/><h5>Please click "CAPTURE PHOTO" and look at the camara.</h5><a id="submit_id" href="/capture/{{url}}" onclick="display_loader();" >CAPTURE PHOTO</a><button id="myDIV" style="display: none;" type="button" class="btn btn-dark btn-rounded   " data-mdb-ripple-color="#ffffff"> <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing please look at the camara</button>', function () { alertify.success('click continue to move to the next step'); });
+    }
+    function display_loader() {
+        document.getElementById("submit_id").style.visibility = "hidden";
+        document.getElementById("myDIV").style.display = "block";
     }
     setTimeout(function () {
         $('#alert2').alert('close');
