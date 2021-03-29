@@ -88,7 +88,7 @@ def register(request):
             else:
                 response_text['message']="show_last_info"
                 obj=voter_data.objects.all()
-                if obj[0].is_superuser:
+                if len(obj)==1:
                     key_number=0
                 else:    
                     key_number=obj[len(obj)-1].key_number+1
@@ -191,9 +191,16 @@ def addCandidate(request):
         messages.warning(request,'You have to be admin to add candidates')
         return redirect("/")
     usr=request.user
-    res=AddCandidate("INR","RAHUL",usr.key_number)
-    return HttpResponse(res)  
-
+    if request.method == "POST":
+        party=request.POST.get('party',None)
+        candidate_name=request.POST.get('candidate_name',None)
+        res=AddCandidate(party,candidate_name,usr.key_number)
+        if res=="added":
+            messages.success(request,'Candidate Added Successfully')
+            return redirect("/")
+        else:
+            messages.warning(request,'Some error occured during the process please try again later')
+            return redirect("/")
 
 @login_required(login_url="/register")
 def cast_vote(request):
@@ -229,12 +236,26 @@ def results(request):
     if get_status(usr.key_number):
         details=result()
         party_and_candidates=[]
+        party=[];candidate=[]
         final_results=[]
+        results=[]
+        colors=[]
+        d={}
         for i in range(len(details)):
             party_and_candidates.append((details[i][1])+" - "+(details[i][2])) 
+            d[(details[i][1])+" - "+(details[i][2])]=details[i][3]
             final_results.append(details[i][3])
+            temp='rgb({},{},{})'.format(random.randint(0,226),random.randint(0,226),random.randint(0,226))
+            colors.append(temp)      
+        d=dict(sorted(d.items(),key=lambda item:item[1],reverse=True))
+        for key,value in d.items():
+            temp=key.split("-")
+            party.append(temp[0]);candidate.append(temp[1]);results.append(value) 
         response_text['details']=party_and_candidates
         response_text['results']=final_results
+        response_text['colors']=colors
+        response_text['mainlist']=zip(party,candidate,results)
+        response_text['d']=d
         return render(request,'result.html',response_text)
     else:
         messages.warning(request,'You have to vote first to see the results')

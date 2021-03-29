@@ -13,17 +13,15 @@
         integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0"
         crossorigin="anonymous"></script>
     <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Akaya+Telivigala&family=Cormorant+Unicase&display=swap"
         rel="stylesheet">
     <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css" />
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css" />
 
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet" />
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
-    <!-- MDB -->
+
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.3.0/mdb.min.css" rel="stylesheet" />
 
     <title>VOTECHAIN-HOME</title>
@@ -47,6 +45,12 @@
                             <button type="button" class="btn btn-light btn-rounded   " data-mdb-ripple-color="#ffffff">
                                 Admin <i class="fas fa-toolbox"></i></button>
                         </a>
+                        <h5 style="visibility:hidden;">..</h5>
+                        <a data-toggle="tooltip" title="add candidate" onclick="addcandidate();">
+                            <button type="button" class="btn btn-outline-light btn-rounded   "
+                                data-mdb-ripple-color="#ffffff">
+                                add candidate-<i class="fas fa-user"></i></button>
+                        </a>
                         {% endif %}
                         <a class="nav-link" href="" style="color: cornsilk;">hello {{name}}</a>
                         {%if vote and not usr_id%}
@@ -55,14 +59,21 @@
                                 data-mdb-ripple-color="#000000">Cast Vote <i class="fas fa-vote-yea"></i></button>
                         </a>
                         {%endif%}
-                        <h5 style="visibility:hidden;" >..</h5>
+                        <h5 style="visibility:hidden;">..</h5>
                         {%if usr_id %}
                         <a data-toggle="tooltip" title="Verify your face " onclick="display_gif();">
                             <button type="button" class="btn btn-outline-light btn-rounded   "
                                 data-mdb-ripple-color="#000000"> Verify face-id <i class="fas fa-camera"></i></button>
                         </a>
                         {%endif%}
-                        <h5 style="visibility:hidden;" >..</h5>
+                        <h5 style="visibility:hidden;">..</h5>
+                        {%if results%}
+                        <a href="/results/" data-toggle="tooltip" title="Check results">
+                            <button type="button" class="btn btn-outline-light btn-rounded   "
+                                data-mdb-ripple-color="#000000">Check results <i class="fas fa-poll"></i></button>
+                        </a>
+                        {%endif%}
+                        <h5 style="visibility:hidden;">..</h5>
                         <a href="/logout/" data-toggle="tooltip" title="logout">
                             <button type="button" class="btn btn-light btn-rounded   " data-mdb-ripple-color="#ffffff">
                                 Logout <i class="fas fa-sign-out-alt"></i></button>
@@ -201,7 +212,7 @@
 
         <!-- Copyright -->
         <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2)">
-            PROJECT MADE BY TEAM-2  -
+            PROJECT MADE BY TEAM-2 -
             <a class="text-white" href="https://github.com/Amithnc/Votechain"><i class="fab fa-github fa-2x"></i></a>
         </div>
         <!-- Copyright -->
@@ -219,6 +230,9 @@
     function display_loader() {
         document.getElementById("submit_id").style.visibility = "hidden";
         document.getElementById("myDIV").style.display = "block";
+    }
+    function addcandidate() {
+        alertify.alert('Add Candidate', '<form action="/add_candidate/" method="POST" >{% csrf_token %}<input type="text" class="form-control" name="party" placeholder="Candidate Party" required="true"><br><input type="text" class="form-control" name="candidate_name" placeholder="Candidate Name" required="true"><br><input type="submit" class="btn btn-success" ></form>', function () { alertify.warning('click Add candidate to add candidate'); });
     }
 </script>
 

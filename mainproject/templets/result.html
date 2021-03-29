@@ -1,17 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 {% load static %}
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>VOTECHAIN-results</title>
     <script type="text/javascript" src="https://www.chartjs.org/dist/2.9.4/Chart.min.js"></script>
-    <script type="text/javascript" src="https://www.chartjs.org/samples/latest/utils.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.3.0/mdb.min.css" rel="stylesheet" />
 </head>
 
 <body>
-    <div id="canvas-holder" style="width:90%">
-        <canvas id="chart-area"></canvas>
+    <div class="jumbotron text-center">
+        <h3>These are the results</h3>
+        <hr>
+    </div>
+    <div class="d-flex align-items-start mb-2" style >
+        <div class="col">
+            <div id="canvas-holder" style="align-items: center;width:100%">
+                <canvas id="chart-area"></canvas>
+            </div>
+        </div>
+        <div class="col" >
+            <table class="table table-bordered table-sm table-dark">
+                <thead>
+                  <tr>
+                    <th scope="col"><h6><strong>Sl No</strong></h6></th>
+                    <th scope="col"><h6><strong>Party</strong></h6></th>
+                    <th scope="col"><h6><strong>Candidate Name</strong></h6></th>
+                    <th scope="col"><h6><strong>No of votes</strong></h6></th>
+                  </tr>
+                </thead> 
+                <tbody> 
+                {% for party,candidate,result in mainlist %}
+                  <tr>
+                    <th scope="row"><h5>{{ forloop.counter }}</h5></th>
+                    <td><h6>{{ party }}</h6></td>
+                    <td><h6>{{ candidate }}</h6></td> 
+                    <td><h6>{{ result }}</h6> </td>
+                  </tr>
+                {%endfor%}
+            </tbody>
+              </table>
+        </div>
     </div>
 </body>
 <script>
@@ -22,24 +54,25 @@
                 data: [
                     // @ts-ignore
                     {%for values in results %}
-                    {{values}},
-                    {%endfor%}
+                    {{ values }},
+                    {% endfor %}
                 ],
-                backgroundColor: [
-                    'rgb(255, 159, 64)',
-                    'rgb(255, 99, 132)',
-                ],
-                label: 'Dataset 1'
+    backgroundColor: [
+                {%for color in colors %}
+                    '{{ color }}',
+                {% endfor %}
+    ],
+        label: 'Dataset 1'
             }],
-            labels: [
-                {%for parties in details%}
-                "{{parties}}",
-                {%endfor%}
+    labels: [
+        {%for parties in details %}
+    "{{parties}}",
+        {% endfor %}
             ]
         },
-        options: {
-            responsive: true
-        }
+    options: {
+        responsive: true
+    }
     };
 
     window.onload = function () {
