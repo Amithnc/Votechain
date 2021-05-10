@@ -12,4 +12,5 @@ urlpatterns=[
     path('vote/',views.cast_vote),
     path('add_candidate/',views.addCandidate),
     path('results/',views.results),
+    path('publish-results/',views.publish_result),
 ]

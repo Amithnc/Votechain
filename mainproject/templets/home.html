@@ -51,9 +51,19 @@
                                 data-mdb-ripple-color="#ffffff">
                                 add candidate-<i class="fas fa-user"></i></button>
                         </a>
+                        <h5 style="visibility:hidden;">..</h5>
+                        <a href="publish-results/" data-toggle="tooltip" title="Publish or withhold results" >
+                            <button type="button" class="btn btn-outline-{% if results_publish_status %}danger{% else %}success{% endif %} btn-rounded "
+                                data-mdb-ripple-color="#ffffff">
+                                {% if results_publish_status %}
+                                    Withhold Results
+                                {% else %}
+                                    Publish results
+                                {% endif  %} </button>   
+                        </a>
                         {% endif %}
-                        <a class="nav-link" href="" style="color: cornsilk;">hello {{name}}</a>
-                        {%if vote and not usr_id%}
+                        {% if name %} <a class="nav-link" href="" style="color: cornsilk;">hello {{name}}</a>{% endif %}
+                        {%if vote and not usr_id and not request.user.is_superuser %}
                         <a href="vote/" data-toggle="tooltip" title="Cast Vote">
                             <button type="button" class="btn btn-outline-light btn-rounded   "
                                 data-mdb-ripple-color="#000000">Cast Vote <i class="fas fa-vote-yea"></i></button>

@@ -1,7 +1,7 @@
 // Closing the alert
 setTimeout(function () { 
     $('#alert').alert('close');
-}, 5000);
+}, 8000);
 
 //form validation
 
@@ -25,8 +25,8 @@ function validateForm() {
         alertify.alert('❌ERROR', "Please enter correct phone number", function () { alertify.error('Enter Correct Phone Number'); });
         return false
     }
-    if (isNaN(aadhar)) {
-        alertify.alert('❌ERROR', "Please enter correct aadhar number", function () { alertify.error('Enter Correct Aadhar Number'); });
+    if (aadhar.length()==11) {
+        alertify.alert('❌ERROR', "Please enter correct aadhar number or voter id number", function () { alertify.error('Enter Correct Aadhar Number or voter id number'); });
         return false
     }
     if (password != cnfpassword) {

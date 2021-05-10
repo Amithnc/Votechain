@@ -60,3 +60,14 @@ class voter_data(AbstractBaseUser):
 
     class Meta:
         verbose_name_plural = "data"     
+
+class results_publish_status(models.Model):
+    Publish_result  =models.BooleanField(default=False)
+
+    def __str__(self):
+        if self.Publish_result:
+            return "Results are Published"
+        else:
+            return "Results are not Published"    
+    class Meta:
+        verbose_name_plural = "results_publish_status" 

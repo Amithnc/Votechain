@@ -5,7 +5,7 @@ from .utils import capture,train_model,recognize
 import requests
 import random
 from django.contrib.auth.decorators import login_required
-from .models import voter_data
+from .models import voter_data,results_publish_status
 from django.contrib.auth.hashers import check_password,make_password
 from django.contrib.auth import get_user_model
 from django.contrib import auth
@@ -18,6 +18,8 @@ def homepage(request):
     # print("last_object_id:-",o[len(o)-1].id)
     response_text={}
     usr=request.user
+    results_obj=results_publish_status.objects.all()
+    response_text['results_publish_status']=results_obj[0].Publish_result
     if request.user.is_authenticated and not(request.user.is_superuser):
         aadhar=usr.aadhar_number
         raw_url="https://aadhar.pythonanywhere.com/data/"
@@ -33,7 +35,9 @@ def homepage(request):
         if not status:
             response_text['vote']="TRUE" 
         else:
-            response_text['results']="TRUE"   
+            res_obj=results_publish_status.objects.all()
+            if res_obj[0].Publish_result:
+                response_text['results']="TRUE"   
     return render(request,'home.html',response_text)
 
 otp=0
@@ -48,30 +52,32 @@ def register(request):
         user_input_otp=request.POST.get('otp',None)
         obj=voter_data.objects.filter(aadhar_number=aadhar)
         if len(obj)!=0:
-            messages.warning(request, 'Already registered please use the key to vote')
+            messages.warning(request, ' You have already registered please use the key sent to your mobile number to vote')
             return redirect('/register')
         raw_url="https://aadhar.pythonanywhere.com/data/"
         url=raw_url+str(aadhar)
         response = requests.request("GET", url)
         temp=eval(response.text)
         if not temp:
-            messages.warning(request, 'Aadhar card not found. Please check the aadhar number')
+            messages.error(request, 'Aadhar card/voter ID not found. Please check the aadhar/voter ID number')
             return redirect('/register')
         data=temp[0]
         if data['name'].lower()!=name.lower():
-            messages.warning(request, 'Name doest match with Aadhar database')
+            messages.error(request, 'Name doesnt match with the database')
             return redirect('/register')
         if data['phone_number']!=phone:
-            messages.warning(request, 'Phone Number doest match with aadhar database')
+            messages.error(request, 'Phone Number doesnt match with the database')
             return redirect('/register')
         if int(data['age'])<18:
-            messages.warning(request, 'sorry you cannot cast vote in this age')
+            messages.error(request, 'sorry you cannot cast vote in this age')
             return redirect('/register')
         response_text={}
         response_text['message']="show"
         if user_input_otp=="" and password =="":
             global otp
             number=generate_otp()
+            if len(str(number))!=4:
+                number=generate_otp()
             otp=number
             print(otp,"otp----when sending")
             # first_snippet="https://www.fast2sms.com/dev/bulkV2?authorization=ikvTwZbp4tSNDdmI1Ls8BjcFehOVAqglozuKQYMrUHaCn7R6G2atl7ZjPgYDkvNoMEueA32d6ws85O1C&route=v3&sender_id=TXTIND&message_text="
@@ -83,7 +89,7 @@ def register(request):
         else:
             # print(otp,"otp----in check")
             if otp!=int(user_input_otp):
-                messages.warning(request, 'WRONG OTP PLEASE TRY AGAIN')
+                messages.error(request, 'WRONG OTP PLEASE TRY AGAIN')
                 return render(request,'register.html',response_text)
             else:
                 response_text['message']="show_last_info"
@@ -110,11 +116,11 @@ def generate_otp():
 def capture_images(request,id):
     temp=id.split("&")
     voter_data.objects.create(
-        aadhar_number=int(temp[0]),
+        aadhar_number=temp[0],
         key_number=int(temp[1]),
         password=make_password(passwd),
         key="TEMP")
-    obj=voter_data.objects.filter(aadhar_number=int(temp[0]))
+    obj=voter_data.objects.filter(aadhar_number=temp[0])
     response=capture(obj[0].id)
     if response=="done":
         result=train()
@@ -123,7 +129,7 @@ def capture_images(request,id):
             ganache_url="HTTP://127.0.0.1:7545"
             web3=Web3(Web3.HTTPProvider(ganache_url))
             ganache_key=web3.eth.accounts[int(temp[1])]
-            voter_data.objects.filter(aadhar_number=int(temp[0])).update(key=ganache_key)
+            voter_data.objects.filter(aadhar_number=temp[0]).update(key=ganache_key)
             raw_url="https://aadhar.pythonanywhere.com/data/"
             url=raw_url+temp[0]
             response = requests.request("GET", url)
@@ -151,15 +157,18 @@ def login(request):
         if user:
             auth.login(request, user)
             if user.is_verified:
+                if request.user.is_superuser:
+                    messages.success(request,'successfully logged-in')
+                    return redirect("/")
+                if get_status(user.key_number):
+                    messages.success(request,'successfully logged-in and you have already voted so please check the results once it is out')
+                    return redirect("/")
                 messages.success(request,'successfully logged-in and your face-id is already verified so please continue to vote')
-                return redirect("/")
-            if get_status(user.key_number):
-                messages.success(request,'successfully logged-in and you have already voted so please the results now')
                 return redirect("/")
             messages.success(request,'successfully logged-in please verify your face-id to continue to vote')
             return redirect("/")
         else:
-            messages.warning(request,'WRONG CREDENTIALS PLEASE TRY AGAIN')
+            messages.error(request,'WRONG CREDENTIALS PLEASE TRY AGAIN')
             response_text['message']="tab2"  
             return render(request,'register.html',response_text)
 
@@ -172,14 +181,14 @@ def logout(request):
 def recoginze_face(request,id):
     obj=voter_data.objects.filter(id=id)
     if len(obj)==0:
-        messages.warning(request,'NO FACE-ID FOUND WITH THE REQUESTED ID')
+        messages.error(request,'NO FACE-ID FOUND WITH THE REQUESTED ID')
         return redirect('/')
     for i in range(5):    
         res=recognize()
         if res==int(id):
             break
     else:
-        messages.warning(request,'unable to authorize your face-id please make sure you sit in well lighted area and try again')
+        messages.error(request,'unable to authorize your face-id please make sure you sit in well lighted area and try again')
         return redirect('/')
     voter_data.objects.filter(id=int(id)).update(is_verified=True)   
     messages.success(request,'successfully authenticated proceed to voting')
@@ -188,7 +197,7 @@ def recoginze_face(request,id):
 @login_required(login_url="/register")
 def addCandidate(request):
     if not request.user.is_superuser:
-        messages.warning(request,'You have to be admin to add candidates')
+        messages.error(request,'You have to be admin to add candidates')
         return redirect("/")
     usr=request.user
     if request.method == "POST":
@@ -199,7 +208,7 @@ def addCandidate(request):
             messages.success(request,'Candidate Added Successfully')
             return redirect("/")
         else:
-            messages.warning(request,'Some error occured during the process please try again later')
+            messages.error(request,'Some error occured during the process please try again later')
             return redirect("/")
 
 @login_required(login_url="/register")
@@ -207,18 +216,18 @@ def cast_vote(request):
     response_text={}
     usr=request.user
     if not usr.is_verified:
-        messages.warning(request,'please verify your face-id frist and then proceed with this step')
+        messages.error(request,'please verify your face-id frist and then proceed with this step')
         return redirect('/')  
     if get_status(usr.key_number):
-        messages.warning(request,'You have already voted')
+        messages.error(request,'You have already voted')
         return redirect('/')    
     if request.method == "POST":
         candidate_id=request.POST.get('candidate_name',None)
         if vote_candidate(int(candidate_id),usr.key_number):
-            messages.success(request,'Successfully voted check the result now')
+            messages.success(request,'Successfully voted check the results when it is out')
             return redirect('/') 
         else:
-            messages.warning(request,'some error occured during voting please try after sometime')
+            messages.error(request,'some error occured during voting please try after sometime')
             return redirect('/')     
     details=result()
     party_and_candidates=[]
@@ -229,10 +238,30 @@ def cast_vote(request):
     response_text['details']=zip(party_and_candidates_number,party_and_candidates)
     return render(request,'vote.html',response_text)   
  
+
+@login_required(login_url="/register")
+def publish_result(request):
+    if not request.user.is_superuser:
+        messages.error(request,'You have to be admin to publish results')
+        return redirect("/")
+    status_obj=results_publish_status.objects.all()
+    if status_obj[0].Publish_result :
+        results_publish_status.objects.filter(id=status_obj[0].id).update(Publish_result=False) 
+    else:
+        results_publish_status.objects.filter(id=status_obj[0].id).update(Publish_result=True)    
+    if status_obj[0].Publish_result:
+        messages.success(request,'Successfully Published the results')  
+    else:
+        messages.success(request,'Successfully withholded the results')   
+    return redirect("/")
 @login_required(login_url="/register")
 def results(request):
     usr=request.user
     response_text={}
+    results_obj=results_publish_status.objects.all()
+    if not results_obj[0].Publish_result:
+        messages.error(request,'Results are not yet published')
+        return redirect('/')
     if get_status(usr.key_number):
         details=result()
         party_and_candidates=[]
@@ -258,5 +287,5 @@ def results(request):
         response_text['d']=d
         return render(request,'result.html',response_text)
     else:
-        messages.warning(request,'You have to vote first to see the results')
+        messages.error(request,'You have to vote first to see the results')
         return redirect("/")
