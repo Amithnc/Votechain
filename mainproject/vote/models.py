@@ -71,3 +71,13 @@ class results_publish_status(models.Model):
             return "Results are not Published"    
     class Meta:
         verbose_name_plural = "results_publish_status" 
+
+class transactions(models.Model):
+    hash_value          =models.CharField(max_length=50,default='',)
+    catagory            =models.CharField(max_length=20,default='')
+    input_value         =models.TextField()
+
+    def __str__(self):
+        return self.hash_value
+    class Meta:
+        verbose_name_plural = "transactions"
