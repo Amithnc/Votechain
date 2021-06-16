@@ -1,0 +1,28 @@
+
+    html,
+    body {
+        margin: 0px;
+        padding: 0px;
+        width: 100%;
+        height: 100%;
+        font-family: Helvetica;
+        overflow: hidden;
+    }
+
+    #tree {
+        width: 100%;
+        height: 100%;
+    }
+
+    .contract_creation rect {
+        stroke: #039BE5;
+    }
+
+    .add_candidate rect {
+        stroke: #FFCA28;
+    }
+
+    .vote rect {
+        stroke: #26AA5A;
+    }
+
