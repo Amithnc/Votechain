@@ -5,13 +5,13 @@ from .utils import capture,train_model,recognize
 import requests
 import random
 from django.contrib.auth.decorators import login_required
-from .models import voter_data,results_publish_status
+from .models import voter_data,results_publish_status,transactions
 from django.contrib.auth.hashers import check_password,make_password
 from django.contrib.auth import get_user_model
 from django.contrib import auth
 # if request.user.is_authenticated():
-from django.http import HttpResponse
-from .main_web3 import AddCandidate,vote_candidate,result,get_status
+from django.http import HttpResponse,JsonResponse
+from .main_web3 import AddCandidate,vote_candidate,result,get_status,decrypt_hash
 
 def homepage(request):  
     # o=voter_data.objects.all()
@@ -289,3 +289,21 @@ def results(request):
     else:
         messages.error(request,'You have to vote first to see the results')
         return redirect("/")
+
+def get_blocks_details(request):
+    #decrypt the hash
+    if request.method == "POST":
+        hash=request.POST.get('hash',None)
+        if hash != '-':
+            obj=transactions.objects.filter(hash_value=hash)
+            obj=obj[0]
+            decrypted_value=str(decrypt_hash(obj.input_value))
+            return JsonResponse({"result": decrypted_value}, status=200)
+        else:
+            return JsonResponse({"result": "No data present as it is a contract creation block"}, status=200)
+        
+        
+    transactions_obj=transactions.objects.all()
+    return_response={'transactions':transactions_obj}
+    return render(request,'block_details.html',return_response)
+

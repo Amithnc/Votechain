@@ -73,11 +73,14 @@ class results_publish_status(models.Model):
         verbose_name_plural = "results_publish_status" 
 
 class transactions(models.Model):
-    hash_value          =models.CharField(max_length=50,default='',)
+    node_id             =models.IntegerField(default=-1)
+    hash_value          =models.CharField(max_length=64,default='',)
     catagory            =models.CharField(max_length=20,default='')
+    checksum            =models.CharField(max_length=100,default='')
+    pid                 =models.IntegerField(default=-1)
     input_value         =models.TextField()
 
     def __str__(self):
-        return self.hash_value
+        return self.checksum
     class Meta:
         verbose_name_plural = "transactions"

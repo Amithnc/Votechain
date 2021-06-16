@@ -13,4 +13,5 @@ urlpatterns=[
     path('add_candidate/',views.addCandidate),
     path('results/',views.results),
     path('publish-results/',views.publish_result),
+    path('get-blocks/',views.get_blocks_details),
 ]
