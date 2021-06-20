@@ -5,15 +5,15 @@ from .utils import capture,train_model,recognize
 import requests
 import random
 from django.contrib.auth.decorators import login_required
-from .models import voter_data,results_publish_status,transactions
+from .models import voter_data,results_publish_status,transactions,parties
 from django.contrib.auth.hashers import check_password,make_password
 from django.contrib.auth import get_user_model
 from django.contrib import auth
 # if request.user.is_authenticated():
 from django.http import HttpResponse,JsonResponse
-from .main_web3 import AddCandidate,vote_candidate,result,get_status,decrypt_hash
+from .main_web3 import AddCandidate,vote_candidate,result,get_status,decrypt_hash,get_count
 
-def homepage(request):  
+def homepage(request):
     # o=voter_data.objects.all()
     # print("last_object_id:-",o[len(o)-1].id)
     response_text={}
@@ -33,11 +33,11 @@ def homepage(request):
     if usr.is_authenticated:
         status=get_status(usr.key_number)
         if not status:
-            response_text['vote']="TRUE" 
+            response_text['vote']="TRUE"
         else:
             res_obj=results_publish_status.objects.all()
             if res_obj[0].Publish_result:
-                response_text['results']="TRUE"   
+                response_text['results']="TRUE"
     return render(request,'home.html',response_text)
 
 otp=0
@@ -96,12 +96,12 @@ def register(request):
                 obj=voter_data.objects.all()
                 if len(obj)==1:
                     key_number=0
-                else:    
+                else:
                     key_number=obj[len(obj)-1].key_number+1
                 global passwd
                 passwd=password
                 response_text['url']=str(aadhar)+"&"+str(key_number)
-                messages.success(request,'successfully verified your phone number')    
+                messages.success(request,'successfully verified your phone number')
                 return render(request,'register.html',response_text)
         return render(request,'register.html',response_text)
     return render(request,'register.html')
@@ -142,7 +142,7 @@ def capture_images(request,id):
             # url=first_snippet+message+next_snippet
             # requests.request("GET", url)
             messages.success(request,'Registration successful Key is sent to your mobile number')
-            return redirect('/')   
+            return redirect('/')
 
 def train():
     train_model()
@@ -169,13 +169,13 @@ def login(request):
             return redirect("/")
         else:
             messages.error(request,'WRONG CREDENTIALS PLEASE TRY AGAIN')
-            response_text['message']="tab2"  
+            response_text['message']="tab2"
             return render(request,'register.html',response_text)
 
 def logout(request):
     auth.logout(request)
     messages.success(request, 'logged-out successfully')
-    return redirect("/")            
+    return redirect("/")
 
 @login_required(login_url="/register")
 def recoginze_face(request,id):
@@ -183,14 +183,14 @@ def recoginze_face(request,id):
     if len(obj)==0:
         messages.error(request,'NO FACE-ID FOUND WITH THE REQUESTED ID')
         return redirect('/')
-    for i in range(5):    
+    for i in range(5):
         res=recognize()
         if res==int(id):
             break
     else:
         messages.error(request,'unable to authorize your face-id please make sure you sit in well lighted area and try again')
         return redirect('/')
-    voter_data.objects.filter(id=int(id)).update(is_verified=True)   
+    voter_data.objects.filter(id=int(id)).update(is_verified=True)
     messages.success(request,'successfully authenticated proceed to voting')
     return redirect('/')
 
@@ -203,8 +203,16 @@ def addCandidate(request):
     if request.method == "POST":
         party=request.POST.get('party',None)
         candidate_name=request.POST.get('candidate_name',None)
+        symbol_file=request.FILES['symbol_file']
         res=AddCandidate(party,candidate_name,usr.key_number)
-        if res=="added":
+        if res:
+            parties_obj=parties.objects.all()
+            if len(parties_obj)==0 or parties_obj[len(parties_obj)-1].checksum  ==res :
+                parties.objects.create(checksum=res,candidate_id=get_count(),symbol=symbol_file)
+            else:
+                for obj in parties_obj:
+                    obj.delete() 
+                parties.objects.create(checksum=res,candidate_id=get_count(),symbol=symbol_file)   
             messages.success(request,'Candidate Added Successfully')
             return redirect("/")
         else:
@@ -217,27 +225,32 @@ def cast_vote(request):
     usr=request.user
     if not usr.is_verified:
         messages.error(request,'please verify your face-id frist and then proceed with this step')
-        return redirect('/')  
+        return redirect('/')
     if get_status(usr.key_number):
         messages.error(request,'You have already voted')
-        return redirect('/')    
+        return redirect('/')
     if request.method == "POST":
         candidate_id=request.POST.get('candidate_name',None)
         if vote_candidate(int(candidate_id),usr.key_number):
             messages.success(request,'Successfully voted check the results when it is out')
-            return redirect('/') 
+            return redirect('/')
         else:
             messages.error(request,'some error occured during voting please try after sometime')
-            return redirect('/')     
+            return redirect('/')
     details=result()
-    party_and_candidates=[]
+    party=[]
+    candidates=[]
+    symbol=[]
     party_and_candidates_number=[]
     for i in range(len(details)):
-        party_and_candidates.append((details[i][1])+" - "+(details[i][2]))   
-        party_and_candidates_number.append(details[i][0])
-    response_text['details']=zip(party_and_candidates_number,party_and_candidates)
-    return render(request,'vote.html',response_text)   
- 
+        party.append(details[i][1])
+        candidates.append(details[i][2])
+        symbol_obj=parties.objects.filter(candidate_id=details[i][0])
+        symbol.append(symbol_obj[0])
+        party_and_candidates_number.append(details[i][0])  
+    response_text['details']=zip(party_and_candidates_number,party,candidates,symbol)
+    return render(request,'vote.html',response_text)
+
 
 @login_required(login_url="/register")
 def publish_result(request):
@@ -246,13 +259,13 @@ def publish_result(request):
         return redirect("/")
     status_obj=results_publish_status.objects.all()
     if status_obj[0].Publish_result :
-        results_publish_status.objects.filter(id=status_obj[0].id).update(Publish_result=False) 
+        results_publish_status.objects.filter(id=status_obj[0].id).update(Publish_result=False)
     else:
-        results_publish_status.objects.filter(id=status_obj[0].id).update(Publish_result=True)    
+        results_publish_status.objects.filter(id=status_obj[0].id).update(Publish_result=True)
     if status_obj[0].Publish_result:
-        messages.success(request,'Successfully Published the results')  
+        messages.success(request,'Successfully Published the results')
     else:
-        messages.success(request,'Successfully withholded the results')   
+        messages.success(request,'Successfully withholded the results')
     return redirect("/")
 @login_required(login_url="/register")
 def results(request):
@@ -271,15 +284,15 @@ def results(request):
         colors=[]
         d={}
         for i in range(len(details)):
-            party_and_candidates.append((details[i][1])+" - "+(details[i][2])) 
+            party_and_candidates.append((details[i][1])+" - "+(details[i][2]))
             d[(details[i][1])+" - "+(details[i][2])]=details[i][3]
             final_results.append(details[i][3])
             temp='rgb({},{},{})'.format(random.randint(0,226),random.randint(0,226),random.randint(0,226))
-            colors.append(temp)      
+            colors.append(temp)
         d=dict(sorted(d.items(),key=lambda item:item[1],reverse=True))
         for key,value in d.items():
             temp=key.split("-")
-            party.append(temp[0]);candidate.append(temp[1]);results.append(value) 
+            party.append(temp[0]);candidate.append(temp[1]);results.append(value)
         response_text['details']=party_and_candidates
         response_text['results']=final_results
         response_text['colors']=colors
@@ -304,8 +317,8 @@ def get_blocks_details(request):
             return JsonResponse({"result": decrypted_value}, status=200)
         else:
             return JsonResponse({"result": "No data present as it is a contract creation block"}, status=200)
-        
-        
+
+
     transactions_obj=transactions.objects.all()
     return_response={'transactions':transactions_obj}
     return render(request,'block_details.html',return_response)

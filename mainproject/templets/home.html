@@ -242,7 +242,7 @@
         document.getElementById("myDIV").style.display = "block";
     }
     function addcandidate() {
-        alertify.alert('Add Candidate', '<form action="/add_candidate/" method="POST" >{% csrf_token %}<input type="text" class="form-control" name="party" placeholder="Candidate Party" required="true"><br><input type="text" class="form-control" name="candidate_name" placeholder="Candidate Name" required="true"><br><input type="submit" class="btn btn-success" ></form>', function () { alertify.warning('click Add candidate to add candidate'); });
+        alertify.alert('Add Candidate', '<form action="/add_candidate/" method="POST"  enctype="multipart/form-data" >{% csrf_token %}<input type="text" class="form-control" name="party" placeholder="Candidate Party" required="true"><br><input type="text" class="form-control" name="candidate_name" placeholder="Candidate Name" required="true"><br>Symbol : <input type="file" name="symbol_file" required="true"></br><br><input type="submit" class="btn btn-success" ></form>', function () { alertify.warning('click Add candidate to add candidate'); });
     }
 </script>
 

@@ -7,7 +7,7 @@ from .models import transactions
 ganache_url="HTTP://127.0.0.1:7545"
 web3=Web3(Web3.HTTPProvider(ganache_url))
 abi=json.loads('[{"constant":false,"inputs":[{"name":"_party","type":"string"},{"name":"_name","type":"string"}],"name":"addCandidate","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_candidateId","type":"uint256"}],"name":"vote","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"name":"_candidateId","type":"uint256"}],"name":"votedEvent","type":"event"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"candidates","outputs":[{"name":"id","type":"uint256"},{"name":"party","type":"string"},{"name":"candidate_name","type":"string"},{"name":"voteCount","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"candidatesCount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"chairperson","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"voters","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"}]')
-checksum="0xeF3f5A807Bc1Ae7cf51E78bcC36e4134D6C97e95"
+checksum="0x29E78E49F9c2560a17B23dEa3F4749a25bb12b62"
 address=web3.toChecksumAddress(checksum)
 contract=web3.eth.contract(address=address,abi=abi)
 
@@ -16,10 +16,10 @@ def AddCandidate(party,name,account_id):
   try:
     hash=contract.functions.addCandidate(party,name).transact()
     add_transaction(hash,'add_candidate')
-    return "added"
+    return checksum
   except Exception as e :
     print(e)
-    return "failed" 
+    return False 
     
 
 def vote_candidate(id,account_id):
@@ -41,6 +41,10 @@ def result():
     party=(contract.functions.candidates(i).call())
     details.append(party)  
   return details  
+
+def get_count():
+  count=contract.functions.candidatesCount().call()
+  return count
 
 def get_status(account_id):
   status=contract.functions.voters(web3.eth.accounts[account_id]).call()

@@ -84,3 +84,14 @@ class transactions(models.Model):
         return self.checksum
     class Meta:
         verbose_name_plural = "transactions"
+
+
+class parties(models.Model):
+    checksum            =models.CharField(max_length=100,default='')
+    candidate_id        =models.IntegerField(default=-1)
+    symbol              =models.ImageField(upload_to='symbols/',default='')
+
+    def __str__(self):
+        return str(self.candidate_id)
+    class Meta:
+        verbose_name_plural = "parties"

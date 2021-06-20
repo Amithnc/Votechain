@@ -15,7 +15,7 @@
         crossorigin="anonymous"></script>
     <!--Fontawesome-->
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" crossorigin="anonymous" />
-    <script src="{% static 'js/vote.js' %}"></script>
+    <script src="{% static 'js/vote2.js' %}"></script>
     <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css" />
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css" />
@@ -23,7 +23,7 @@
 </head>
 
 <body>
-    <div class="container-fluid d-flex justify-content-center align-content-center align-items-center">
+    <div class="d-flex justify-content-center align-content-center align-items-center">
         <div class="container" >
             <div class="row d-flex justify-content-center">
                 <div class="col-md-6 col-lg-8 col-sm-12 col  p-4">
@@ -31,26 +31,33 @@
                         <img src="/media/undraw_election_day_w842.svg" alt="" srcset="" class="rounded" width="100"
                             height="100">
                         <h4 class="pt-2">Somewhere inside of all of us is the power to change the world.<br>Please vote
-                            responsibly</h4>
+                            responsibly</h4>    
                     </div>
-                    <form action="/vote/" method="POST" onsubmit="return validate();" >{%csrf_token%}
-                        <div class="form-group">
-                            <span class="custom-dropdown" >
-                                <select class="text-center" id="candidate_name" name="candidate_name" style="width:100%" >
-                                    <option value="" disabled selected >Name of Party & Candidate</option>
-                                    {%for number,detail in details%}
-                                    <option value="{{number}}">{{detail}}</option>
-                                    {%endfor%}
-                                </select>
-                            </span>
+                    <hr>
+                    <div class="row" id="vote_div" >
+                        {%for number,party,candidate,symbol_obj in details%}
+                        <div class="col-md-4">
+                            <div class="card text-center"  style="height: 24rem; background-color: #ecf0f3; " >
+                                <img src="/media/{{symbol_obj.symbol}}" class="card-img-top" style="height: 15rem;">
+                                <div class="card-body">
+                                  <p class="card-text">party :<strong> {{party}}</strong></p>
+                                  <p class="card-text">candidate : <strong>{{candidate}}</strong> </p>
+                                  <a class="btn btn-success" onclick="vote({{number}},'{{party}}','{{candidate}}');" >Click to VOTE</a>
+                                </div>
+                              </div>
                         </div>
-                        <div class="form-group">
-                            <button class="btn btn-success ">Vote</button>
+                        {%if forloop.counter == 3 %}
                         </div>
-                        <div class="form-group text-center">
-                            <a href="/" class="text-muted">Back</a>
+                        <br>
+                        <div class="row" id="vote_div" >
+                        {%endif%}  
+                        {%endfor%} 
+                    </div> 
+                    <div id="spinner" style="display:none;"><h3 class="text text-center text-danger " >Do not refresh</h3><br>
+                        Please Wait till we process your request
+                        <div class="spinner-border text-primary" role="status"><span class="visually-hidden"></span>
                         </div>
-                    </form>
+                    </div>   
                 </div>
             </div>
         </div>
