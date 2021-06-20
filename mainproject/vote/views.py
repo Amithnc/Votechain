@@ -297,7 +297,10 @@ def get_blocks_details(request):
         if hash != '-':
             obj=transactions.objects.filter(hash_value=hash)
             obj=obj[0]
-            decrypted_value=str(decrypt_hash(obj.input_value))
+            if obj.catagory=='vote':
+                decrypted_value=str(decrypt_hash(obj.input_value,catagory="vote"))
+            else:
+                decrypted_value=str(decrypt_hash(obj.input_value))
             return JsonResponse({"result": decrypted_value}, status=200)
         else:
             return JsonResponse({"result": "No data present as it is a contract creation block"}, status=200)
