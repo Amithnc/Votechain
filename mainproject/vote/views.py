@@ -28,6 +28,9 @@ def homepage(request):
         temp=eval(response.text)
         data=temp[0]
         response_text['name']=data['name']
+        response_text['aadhar_number']=aadhar
+        response_text['age']=data['age']
+        response_text['phone_number']=data['phone_number']
         if not usr.is_verified:
             response_text['usr_id']=usr.id
     if usr.is_authenticated:

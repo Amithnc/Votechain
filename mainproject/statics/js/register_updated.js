@@ -25,12 +25,12 @@ function validateForm() {
         alertify.alert('❌ERROR', "Please enter correct phone number", function () { alertify.error('Enter Correct Phone Number'); });
         return false
     }
-    if (aadhar.length()==11) {
-        alertify.alert('❌ERROR', "Please enter correct aadhar number or voter id number", function () { alertify.error('Enter Correct Aadhar Number or voter id number'); });
-        return false
-    }
     if (password != cnfpassword) {
         alertify.alert('❌ERROR', "Both passwords doesnt match", function () { alertify.error('Enter Correct passwords'); });
+        return false
+    }
+    if ( aadhar !="" && aadhar.length()==11) {
+        alertify.alert('❌ERROR', "Please enter correct aadhar number or voter id number", function () { alertify.error('Enter Correct Aadhar Number or voter id number'); });
         return false
     }
 }
