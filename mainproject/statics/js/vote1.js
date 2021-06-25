@@ -6,5 +6,23 @@ function cast_vote(canndidate_id){
     document.getElementById("vote_div").style.display = "none";
     document.getElementById("spinner").style.display = "block";
     alertify.alert('! Do Not Close','<div id="spinner">Please Wait till we process your request<div class="spinner-border text-primary" role="status"><span class="visually-hidden"></span></div></div> ')
-    console.log(canndidate_id)
+    fd= new FormData();
+    const csrf = document.getElementsByName('csrfmiddlewaretoken')
+    fd.append('csrfmiddlewaretoken', csrf[0].value);
+    fd.append('candidate_id',canndidate_id);
+    $.ajax({
+        type: "POST",
+        url: '',
+        data: fd,
+        success: function (response) {
+            location.href = "/"
+        },
+        error: function (response) {
+            alertify.error(response);
+        },
+        cache: false,
+        contentType: false,
+        processData: false
+
+    })
 }

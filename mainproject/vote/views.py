@@ -230,10 +230,10 @@ def cast_vote(request):
         messages.error(request,'You have already voted')
         return redirect('/')
     if request.method == "POST":
-        candidate_id=request.POST.get('candidate_name',None)
+        candidate_id=request.POST.get('candidate_id',None)
         if vote_candidate(int(candidate_id),usr.key_number):
             messages.success(request,'Successfully voted check the results when it is out')
-            return redirect('/')
+            return JsonResponse({'meassage':'success'})
         else:
             messages.error(request,'some error occured during voting please try after sometime')
             return redirect('/')
