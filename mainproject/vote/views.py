@@ -31,6 +31,7 @@ def homepage(request):
         response_text['aadhar_number']=aadhar
         response_text['age']=data['age']
         response_text['phone_number']=data['phone_number']
+        response_text['image']="https://aadhar.pythonanywhere.com/"+data['image']
         if not usr.is_verified:
             response_text['usr_id']=usr.id
     if usr.is_authenticated:
