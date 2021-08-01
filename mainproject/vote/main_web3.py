@@ -72,6 +72,7 @@ def add_transaction(hash,type):
       transactions.objects.create(hash_value=hash,catagory=type,checksum=checksum,input_value=input_value,pid=latest_obj.node_id,node_id=latest_obj.node_id+1)  
   # message=contract.decode_function_input(transaction.input)
   # print(message)
+
 def decrypt_hash(input_value,catagory=False):
   message=contract.decode_function_input(input_value)
   if catagory:
@@ -79,3 +80,7 @@ def decrypt_hash(input_value,catagory=False):
     party=(contract.functions.candidates(candidateId).call())
     message={'_candidateId':party[0],'_party':party[1],'_candidatename':party[2]}
   return message
+
+
+# def get_stats():
+  

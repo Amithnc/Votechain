@@ -271,6 +271,7 @@ def publish_result(request):
     else:
         messages.success(request,'Successfully withholded the results')
     return redirect("/")
+
 @login_required(login_url="/register")
 def results(request):
     usr=request.user
@@ -302,6 +303,11 @@ def results(request):
         response_text['colors']=colors
         response_text['mainlist']=zip(party,candidate,results)
         response_text['d']=d
+        status=get_stats()
+        color=['warning','danger','success']
+        type_of=['People registered but not voted :','People still not registered :','People voted :']
+        response_text["status_list"]=zip(status[0],status[1],color,type_of)
+        response_text['total_in_db']=status[2]
         return render(request,'result.html',response_text)
     else:
         messages.error(request,'You have to vote first to see the results')
@@ -321,9 +327,28 @@ def get_blocks_details(request):
             return JsonResponse({"result": decrypted_value}, status=200)
         else:
             return JsonResponse({"result": "No data present as it is a contract creation block"}, status=200)
-
-
     transactions_obj=transactions.objects.all()
     return_response={'transactions':transactions_obj}
     return render(request,'block_details.html',return_response)
+
+def get_stats():
+    response_text={}
+    #total count of results
+    total_voted=0
+    for each_part in result():
+        total_voted+=each_part[3]    
+    #to get the total no people registed and not voted.
+    response = requests.request("GET", 'https://aadhar.pythonanywhere.com/getstatus/')
+    response=response.text
+    response=eval(response)
+    total_in_db=response['total']
+    voter_obj=voter_data.objects.all()
+    total_registered=len(voter_obj)-1
+    registered_but_not_voted=abs(total_registered-total_voted)
+    not_registered=abs(total_registered-total_in_db)
+    return [round((registered_but_not_voted/total_in_db)*100),round((not_registered/total_in_db)*100),round((total_voted/total_in_db)*100)],[registered_but_not_voted,not_registered,total_voted],total_in_db
+    
+
+
+
 

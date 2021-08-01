@@ -34,15 +34,15 @@
   }
 }
 
-.circular-chart.orange .circle {
+.circular-chart.warning .circle {
   stroke: #ff9f00;
 }
 
-.circular-chart.green .circle {
+.circular-chart.success .circle {
   stroke: #4CC790;
 }
 
-.circular-chart.red .circle {
+.circular-chart.danger .circle {
   stroke: #f80404;
 }
 
